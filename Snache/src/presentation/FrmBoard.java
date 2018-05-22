@@ -10,7 +10,7 @@ public class FrmBoard extends JFrame
 {
 	private static final long serialVersionUID = -206230284397533789L;
 	private GridLayout layout;
-	private Piece pieces[][];
+	private BoardPiece boardPieces[][];
 	private int width;
 	private int height;
 	
@@ -29,7 +29,7 @@ public class FrmBoard extends JFrame
 		layout = new GridLayout(width, height);
 		this.setLayout(layout);
 		
-		pieces = new Piece[width][height];
+		boardPieces = new BoardPiece[width][height];
 		initPieces();
 		
 		this.pack();
@@ -42,11 +42,11 @@ public class FrmBoard extends JFrame
 		{
 			for(int j = 0; j < height; ++j)
 			{
-				pieces[i][j] = new Piece(Color.WHITE);
-				this.add(pieces[i][j]);
+				boardPieces[i][j] = new BoardPiece(Color.WHITE);
+				this.add(boardPieces[i][j]);
 			}
 		}
 		
-		pieces[5][5].setColor(Color.RED);
+		boardPieces[5][5].setColor(Color.RED);
 	}
 }
