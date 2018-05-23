@@ -2,22 +2,19 @@ package domain;
 
 public class SnakePiece extends BoardPiece
 {
-	private int x;
-	private int y;
-	
-	public SnakePiece(SnakePiece old)
+	public SnakePiece(BoardPiece old)
 	{
-		super(old.getX(), old.getY());
+		super(old.getRow(), old.getColumn());
 	}
 	
-	public SnakePiece(int x, int y)
+	public SnakePiece(int row, int column)
 	{
-		super(x, y);
+		super(row, column);
 	}
 	
 	public void copy(SnakePiece otherSnakePiece)
 	{
-		this.x = otherSnakePiece.getX();
-		this.y = otherSnakePiece.getY();
+		super.setRow(otherSnakePiece.getRow());
+		super.setColumn(otherSnakePiece.getColumn());
 	}
 }

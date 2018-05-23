@@ -2,14 +2,14 @@ package domain;
 
 public class BoardPiece
 {
-	private int x;
-	private int y;
+	private int row;
+	private int column;
 	private boolean empty;
 	
-	public BoardPiece(int x, int y)
+	public BoardPiece(int row, int column)
 	{
-		this.x = x;
-		this.y = y;
+		this.row = row;
+		this.column = column;
 		this.empty = true;
 	}
 	
@@ -18,24 +18,23 @@ public class BoardPiece
 		return empty;
 	}
 	
-	public int getX()
+	public int getRow()
 	{
-		return x;
+		return row;
 	}
 	
-	public int getY()
+	public int getColumn()
 	{
-		return y;
+		return column;
 	}
-	
-	public void setX(int x)
+
+	public void setRow(int row)
 	{
-		this.x = x;
+		this.row = row;
 	}
-	
-	public void setY(int y)
+
+	public void setColumn(int column)
 	{
-		this.y = y;
+		this.column = column;
 	}
-	
 }

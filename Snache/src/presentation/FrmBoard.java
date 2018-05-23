@@ -14,22 +14,22 @@ public class FrmBoard extends JFrame
 	private int width;
 	private int height;
 	
-	public FrmBoard(int width, int height)
+	public FrmBoard(int height, int width)
 	{
-		this(width, height, 30);
+		this(height, width, 10);
 	}
 
-	public FrmBoard(int width, int height, int pieceSize)
+	public FrmBoard(int height, int width, int pieceSize)
 	{
 		this.width = width;
 		this.height = height;
-		this.setPreferredSize(new Dimension(width*pieceSize,height*pieceSize));
+		this.setPreferredSize(new Dimension(height*pieceSize,width*pieceSize));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		layout = new GridLayout(width, height);
+		layout = new GridLayout(height, width);
 		this.setLayout(layout);
 		
-		frmBoardPieces = new FrmBoardPiece[width][height];
+		frmBoardPieces = new FrmBoardPiece[height][width];
 		initPieces();
 		
 		this.pack();
@@ -38,20 +38,19 @@ public class FrmBoard extends JFrame
 	
 	private void initPieces()
 	{
-		for(int i = 0; i < width; ++i)
+		for(int i = 0; i < height; ++i)
 		{
-			for(int j = 0; j < height; ++j)
+			for(int j = 0; j < width; ++j)
 			{
 				frmBoardPieces[i][j] = new FrmBoardPiece(Color.WHITE);
 				this.add(frmBoardPieces[i][j]);
 			}
 		}
-		
-		frmBoardPieces[5][5].setColor(Color.RED);
 	}
 	
-	public void paintFrmBoardPiece(int x, int y, Color color)
+	public void setColorAt(int x, int y, Color color)
 	{
+		System.out.println("frmBoardPieces["+x+"]["+y+"].setColor("+color+")");
 		frmBoardPieces[x][y].setColor(color);
 	}
 }

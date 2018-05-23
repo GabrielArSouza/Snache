@@ -3,6 +3,8 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import controller.EnumSnakeDirection;
+
 public class Snake
 {
 	// number of SnakePiece objects in the List<SnakePiece> object
@@ -10,8 +12,41 @@ public class Snake
 	
 	private SnakePiece head;
 	private List<SnakePiece> body;
+	private EnumSnakeDirection direction;
 	
-	public Snake(int headPosition[], List<int[]> bodyPieces)
+	public Snake(int headRow, int headColumn, int bodySize, EnumSnakeDirection initialDirection)
+	{
+		this.head = new SnakePiece(headRow, headColumn);
+		this.body = new ArrayList<SnakePiece>();
+		this.bodySize = bodySize;
+		
+		for(int i = 0; i < bodySize; ++i)
+		{
+			if(initialDirection == EnumSnakeDirection.LEFT)
+			{
+				body.add(new SnakePiece(headRow, headColumn+i+1));
+			}
+			
+			else if(initialDirection == EnumSnakeDirection.RIGHT)
+			{
+				body.add(new SnakePiece(headRow, headColumn-i-1));
+			}
+			
+			else if(initialDirection == EnumSnakeDirection.DOWN)
+			{
+				body.add(new SnakePiece(headRow-i-1, headColumn));
+			}
+			
+			else if(initialDirection == EnumSnakeDirection.UP)
+			{
+				body.add(new SnakePiece(headRow+i+1, headColumn));
+			}
+			
+			this.direction = initialDirection;
+		}
+	}
+	
+	public Snake(int headPosition[], List<int[]> bodyPieces, EnumSnakeDirection initialDirection)
 	{
 		this.head = new SnakePiece(headPosition[0], headPosition[1]);
 		this.body = new ArrayList<SnakePiece>();
@@ -20,6 +55,9 @@ public class Snake
 		{
 			body.add(new SnakePiece(piece[0], piece[1]));
 		}
+		
+		this.bodySize = bodyPieces.size();
+		this.direction = initialDirection;
 	}
 	
 	public SnakePiece getHead()
@@ -27,27 +65,13 @@ public class Snake
 		return head;
 	}
 	
-	/**
-	 * Makes the Snake move.
-	 * @param x the new x coordinate of the head
-	 * @param y the new y coordinate of the head
-	 * @return the old position of the tail (in order to erase it from the board later) 
-	 */
-	public int[] move(int x, int y)
+	public List<SnakePiece> getBody()
 	{
-		SnakePiece lastHead = new SnakePiece(head);
-		SnakePiece lastTail = new SnakePiece(body.get(bodySize-1));
-		
-		// the new position of the piece in the body is the old head position
-		head.copy(body.get(0));
-		body.get(0).copy(lastHead);
-		
-		// new position of the other pieces: old position of the piece closer to the head
-		for(int i = 1; i < bodySize-1; ++i)
-		{
-			body.get(i).copy(body.get(i-1));
-		}
-		
-		return new int[]{lastTail.getX(), lastTail.getY()};
+		return body;
+	}
+	
+	public SnakePiece getTail()
+	{
+		return body.get(bodySize-1);
 	}
 }
