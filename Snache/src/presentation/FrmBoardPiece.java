@@ -5,12 +5,12 @@ import java.awt.Graphics;
 
 import javax.swing.JButton;
 
-public class BoardPiece extends JButton
+public class FrmBoardPiece extends JButton
 {
 	private static final long serialVersionUID = 7706353659170141551L;
 	private Color backgroundColor;
 	
-	public BoardPiece(Color backgroundColor) 
+	public FrmBoardPiece(Color backgroundColor) 
 	{
         super();
         super.setContentAreaFilled(false);
