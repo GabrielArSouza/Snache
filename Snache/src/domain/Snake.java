@@ -60,6 +60,28 @@ public class Snake
 		this.direction = initialDirection;
 	}
 	
+	public void move(EnumSnakeDirection direction)
+	{
+		// Iniciar nova cabeça
+		SnakePiece newHead = null;
+		
+		// Mover Cabeça
+		if ( direction == EnumSnakeDirection.UP )
+			newHead = new SnakePiece((head.getRow()-1), head.getColumn());
+		else if ( direction == EnumSnakeDirection.DOWN )
+			newHead = new SnakePiece((head.getRow()+1), head.getColumn());
+		else if ( direction == EnumSnakeDirection.LEFT)
+			newHead = new SnakePiece(head.getRow(), (head.getColumn()-1));
+		else if ( direction == EnumSnakeDirection.RIGHT)
+			newHead = new SnakePiece(head.getRow(), (head.getColumn()+1));
+		
+		// Mover Corpo
+		for ( int i = body.size()-1; i >=1; i--)
+			body.get(i).copy(body.get(i-1)); 
+		
+		head.copy(newHead);
+	}
+	
 	public SnakePiece getHead()
 	{
 		return head;
@@ -74,4 +96,5 @@ public class Snake
 	{
 		return body.get(bodySize-1);
 	}
+	
 }

@@ -1,6 +1,7 @@
 package main;
 
 import controller.BoardController;
+import controller.EnumSnakeDirection;
 import domain.Board;
 import domain.Snake;
 import presentation.FrmBoard;
@@ -24,7 +25,6 @@ public class Main
 			{
 				controller.drawSnake(snake);
 			}
-		}
-			
+		}		
 	}
 }

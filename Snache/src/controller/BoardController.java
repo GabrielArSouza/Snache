@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.Color;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -120,7 +121,5 @@ public class BoardController
 		System.out.println("new snake: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
 		
 		return new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction);
-		
-			
 	}
 }
