@@ -12,15 +12,21 @@ import domain.BoardPiece;
 import domain.Snake;
 import domain.SnakeConstants;
 import domain.SnakePiece;
+import io.InputDir;
 import presentation.FrmBoard;
 
-public class BoardController
+/**
+ * @author gabriel
+ *
+ */
+public class Game
 {
 	private FrmBoard frmBoard;
 	private Board board;
 	private Stack<Color> availableColors;
+	private List<Snake> snakes;
 	
-	public BoardController(FrmBoard frmBoard, Board board)
+	public Game(FrmBoard frmBoard, Board board)
 	{
 		this.frmBoard = frmBoard;
 		this.board = board;
@@ -122,4 +128,46 @@ public class BoardController
 		
 		return new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction);
 	}
-}
+	
+	/**
+	 * Adiciona uma snake no tabuleiro do jogo
+	 * @param s a nova snake para o jogo
+	 */
+	public void addSnake ( Snake s )
+	{
+		snakes.add(s);
+	}
+	
+	public void moveSnakes ()
+	{
+		for (int i=0; i < snakes.size(); i++)
+		{
+			//Verificar Teclado
+//			InputDir keyboard;
+//			keyboard.keyPressed();
+			
+			// Consome movimento e move a snake
+			EnumSnakeDirection dir = SingletonDir.getInstance().getDirection();
+			snakes.get(i).move(dir);
+		
+			//Verifica se Bateu
+			BoardPiece p = snakes.get(i).getHead();
+			if (p.getRow() < 0 || p.getRow() > board.getHeight() 
+					|| p.getColumn() <0 || p.getColumn() > board.getWidth())
+			{
+				//Matar cobra
+			}
+			
+			
+		}
+	}
+
+	public List<Snake> getSnakes() {
+		return snakes;
+	}
+
+	public void setSnakes(List<Snake> snakes) {
+		this.snakes = snakes;
+	}
+	
+ }

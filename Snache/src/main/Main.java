@@ -1,6 +1,6 @@
 package main;
 
-import controller.BoardController;
+import controller.Game;
 import controller.EnumSnakeDirection;
 import domain.Board;
 import domain.Snake;
@@ -13,7 +13,7 @@ public class Main
 		FrmBoard frmBoard = new FrmBoard(50, 50);
 		frmBoard.setVisible(true);
 		Board board = new Board(50, 50);
-		BoardController controller = new BoardController(frmBoard, board);
+		Game controller = new Game(frmBoard, board);
 		
 		// create and draw 3 random snakes
 		for(int i = 0; i < 3; ++i)

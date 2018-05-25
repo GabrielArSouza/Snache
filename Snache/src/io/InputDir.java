@@ -22,7 +22,8 @@ public class InputDir implements KeyListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) { 
-        //Seta P/ baixo
+		System.out.println("Pressed");
+		//Seta P/ baixo
         if (e.getKeyCode()==40)
         {
         	dir.setDirection(EnumSnakeDirection.DOWN);
@@ -47,6 +48,5 @@ public class InputDir implements KeyListener{
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 }
