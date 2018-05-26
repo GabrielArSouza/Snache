@@ -92,6 +92,14 @@ public class Snake
 		return body;
 	}
 	
+	public EnumSnakeDirection getDirection() {
+		return direction;
+	}
+
+	public void setDirection(EnumSnakeDirection direction) {
+		this.direction = direction;
+	}
+
 	public SnakePiece getTail()
 	{
 		return body.get(bodySize-1);

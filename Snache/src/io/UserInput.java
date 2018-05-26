@@ -10,7 +10,7 @@ import controller.SingletonDir;
  * @author gabriel
  *
  */
-public class InputDir implements KeyListener{
+public class UserInput implements KeyListener{
 
 	SingletonDir dir = SingletonDir.getInstance();
 	

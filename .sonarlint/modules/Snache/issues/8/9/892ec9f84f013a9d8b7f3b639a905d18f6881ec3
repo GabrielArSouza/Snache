@@ -1,0 +1,18 @@
+
+psquid:S1854—";Remove this useless assignment to local variable "oldTail".(ìÒÖ™8²Öâ»¹,HÀRMAJORZ
+CODE_SMELL
+‚squid:S1149"PReplace the synchronized class "Stack" by an unsynchronized one such as "Deque".(¹“âŠúÿÿÿÿH‚RMAJORZ
+CODE_SMELL
+osquid:S1854•":Remove this useless assignment to local variable "oldDir".(äßÃ­8ĞÇÑ»¹,H·RMAJORZ
+CODE_SMELL
+j
+squid:S106"9Replace this use of System.out or System.err by a logger.(‡Òû³øÿÿÿÿHRMAJORZ
+CODE_SMELL
+`squid:S1481•"+Remove this unused "oldDir" local variable.(äßÃ­8ĞÇÑ»¹,HµRMINORZ
+CODE_SMELL
+‹squid:S2293!"YReplace the type specification in this constructor call with the diamond operator ("<>").(ò›‰»úÿÿÿÿH€RMINORZ
+CODE_SMELL
+asquid:S1481—",Remove this unused "oldTail" local variable.(ìÒÖ™8²Öâ»¹,H¿RMINORZ
+CODE_SMELL
+jsquid:UselessImportCheck")Remove this unused import 'io.UserInput'.(ˆüËâ8 ñøº¹,H›RMINORZ
+CODE_SMELL

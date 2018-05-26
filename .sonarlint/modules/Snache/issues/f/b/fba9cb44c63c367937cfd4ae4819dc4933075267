@@ -1,0 +1,14 @@
+
+jsquid:S1197"8Move the array designator from the variable to the type.(×¯Ÿ›øÿÿÿÿHƒRMINORZ
+CODE_SMELL
+j
+squid:S1069"9Replace this use of System.out or System.err by a logger.(ŸòÒŒûÿÿÿÿH„RMAJORZ
+CODE_SMELL
+{squid:MaximumInheritanceDepth"<This class has 6 parents which is greater than 5 authorized.(þÜæŸH‡RMAJORZ
+CODE_SMELL
+bsquid:S2387"."width" is the name of a field in "Component".(•õ¦òùÿÿÿÿH…RBLOCKERZ
+CODE_SMELL
+^squid:S2387"/"height" is the name of a field in "Component".(ÅœÔ˜H†RBLOCKERZ
+CODE_SMELL
+ssquid:S1161=":Add the "@Override" annotation above this method signature(òÝ¬ýÿÿÿÿ8½Õïº¹,H•RMAJORZ
+CODE_SMELL

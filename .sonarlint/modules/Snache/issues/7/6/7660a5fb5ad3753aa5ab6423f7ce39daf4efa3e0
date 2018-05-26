@@ -1,0 +1,4 @@
+
+ksquid:S1118":Add a private constructor to hide the implicit public one.(ÁºŸëøÿÿÿÿHRMAJORZ
+CODE_SMELL
+Qsquid:S2386"Make this member "protected".(ÑãäüÿÿÿÿHRMINORZVULNERABILITY

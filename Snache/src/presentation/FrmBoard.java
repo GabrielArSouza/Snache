@@ -6,7 +6,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 
-import io.InputDir;
+import io.UserInput;
 
 public class FrmBoard extends JFrame
 {
@@ -27,7 +27,8 @@ public class FrmBoard extends JFrame
 		this.height = height;
 		this.setPreferredSize(new Dimension(height*pieceSize,width*pieceSize));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.addKeyListener(new InputDir());
+		this.addKeyListener(new UserInput());
+		this.setFocusable(true);
 		
 		layout = new GridLayout(height, width);
 		this.setLayout(layout);
@@ -55,5 +56,21 @@ public class FrmBoard extends JFrame
 	{
 		System.out.println("frmBoardPieces["+x+"]["+y+"].setColor("+color+")");
 		frmBoardPieces[x][y].setColor(color);
+	}
+	
+	public boolean isFocusable ()
+	{
+		return true;
+	}
+	
+	public void clearBoard ()
+	{
+		for (int i=0; i < this.height; i++)
+		{
+			for (int j=0; j < this.width; j++)
+			{
+				frmBoardPieces[i][j].setColor(Color.WHITE);
+			}
+		}
 	}
 }

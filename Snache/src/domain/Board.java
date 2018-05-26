@@ -114,4 +114,9 @@ public class Board
 	
 		return null;
 	}
+	
+	public void setBoardPiece (BoardPiece p)
+	{
+		boardPieces[p.getRow()][p.getColumn()] = p;
+	}
 }

@@ -12,7 +12,7 @@ import domain.BoardPiece;
 import domain.Snake;
 import domain.SnakeConstants;
 import domain.SnakePiece;
-import io.InputDir;
+import io.UserInput;
 import presentation.FrmBoard;
 
 /**
@@ -126,7 +126,9 @@ public class Game
 		
 		System.out.println("new snake: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
 		
-		return new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction);
+		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction);
+		this.fillShakeOnBoard(snake);
+		return snake;
 	}
 	
 	/**
@@ -141,14 +143,14 @@ public class Game
 	public void moveSnakes ()
 	{
 		for (int i=0; i < snakes.size(); i++)
-		{
-			//Verificar Teclado
-//			InputDir keyboard;
-//			keyboard.keyPressed();
-			
+		{			
 			// Consome movimento e move a snake
-			EnumSnakeDirection dir = SingletonDir.getInstance().getDirection();
-			snakes.get(i).move(dir);
+			EnumSnakeDirection newDir = SingletonDir.getInstance().getDirection();
+			EnumSnakeDirection oldDir = snakes.get(i).getDirection();
+			
+			SnakePiece oldTail	 = snakes.get(i).getTail();
+			
+			snakes.get(i).move(newDir);
 		
 			//Verifica se Bateu
 			BoardPiece p = snakes.get(i).getHead();
@@ -157,8 +159,19 @@ public class Game
 			{
 				//Matar cobra
 			}
-			
-			
+			else 
+			{
+				board.setBoardPiece(snakes.get(i).getHead());
+			}									
+		}
+	}
+	
+	public void fillShakeOnBoard (Snake s)
+	{
+		board.setBoardPiece(s.getHead());
+		for (int i=0; i < s.getBody().size(); i++)
+		{
+			board.setBoardPiece(s.getBody().get(i));
 		}
 	}
 
