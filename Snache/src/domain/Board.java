@@ -115,8 +115,18 @@ public class Board
 		return null;
 	}
 	
-	public void setBoardPiece (BoardPiece p)
+	public BoardPiece getBoardPiece(int row, int column)
 	{
-		boardPieces[p.getRow()][p.getColumn()] = p;
+		return boardPieces[row][column];
+	}
+	
+	public void occupyBoardPiece(BoardPiece p)
+	{
+		boardPieces[p.getRow()][p.getColumn()].setEmpty(false);
+	}
+	
+	public void freeBoardPiece(BoardPiece p)
+	{
+		boardPieces[p.getRow()][p.getColumn()].setEmpty(true);
 	}
 }

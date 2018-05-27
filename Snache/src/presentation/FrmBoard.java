@@ -54,16 +54,15 @@ public class FrmBoard extends JFrame
 	
 	public void setColorAt(int x, int y, Color color)
 	{
-		System.out.println("frmBoardPieces["+x+"]["+y+"].setColor("+color+")");
 		frmBoardPieces[x][y].setColor(color);
 	}
 	
-	public boolean isFocusable ()
+	public boolean isFocusable()
 	{
 		return true;
 	}
 	
-	public void clearBoard ()
+	public void clearBoard()
 	{
 		for (int i=0; i < this.height; i++)
 		{

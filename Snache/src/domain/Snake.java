@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import controller.EnumSnakeDirection;
+import controller.SharedSnakeDirection;
 
 public class Snake
 {
@@ -13,8 +14,9 @@ public class Snake
 	private SnakePiece head;
 	private List<SnakePiece> body;
 	private EnumSnakeDirection direction;
+	private SharedSnakeDirection sharedDirection;
 	
-	public Snake(int headRow, int headColumn, int bodySize, EnumSnakeDirection initialDirection)
+	public Snake(int headRow, int headColumn, int bodySize, EnumSnakeDirection initialDirection, SharedSnakeDirection sharedDirection)
 	{
 		this.head = new SnakePiece(headRow, headColumn);
 		this.body = new ArrayList<SnakePiece>();
@@ -43,24 +45,11 @@ public class Snake
 			}
 			
 			this.direction = initialDirection;
+			this.sharedDirection = sharedDirection;
 		}
 	}
 	
-	public Snake(int headPosition[], List<int[]> bodyPieces, EnumSnakeDirection initialDirection)
-	{
-		this.head = new SnakePiece(headPosition[0], headPosition[1]);
-		this.body = new ArrayList<SnakePiece>();
-		
-		for(int[] piece : bodyPieces)
-		{
-			body.add(new SnakePiece(piece[0], piece[1]));
-		}
-		
-		this.bodySize = bodyPieces.size();
-		this.direction = initialDirection;
-	}
-	
-	public void move(EnumSnakeDirection direction)
+	public void move()
 	{
 		// Iniciar nova cabeça
 		SnakePiece newHead = null;
@@ -105,4 +94,32 @@ public class Snake
 		return body.get(bodySize-1);
 	}
 	
+	public SharedSnakeDirection getSharedDirection()
+	{
+		return sharedDirection;
+	}
+	
+	public void setSharedDirection(SharedSnakeDirection direction)
+	{
+		this.sharedDirection = direction;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(this == obj)
+			return true;
+		if(obj == null)
+			return false;
+		if(getClass() != obj.getClass())
+			return false;
+		Snake other = (Snake) obj;
+		if(head == null)
+		{
+			if(other.head != null)
+				return false;
+		} else if(!head.equals(other.head))
+			return false;
+		return true;
+	}
 }

@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import controller.EnumSnakeDirection;
-import controller.SingletonDir;
+import controller.SharedSnakeDirection;
 
 /**
  * @author gabriel
@@ -12,7 +12,18 @@ import controller.SingletonDir;
  */
 public class UserInput implements KeyListener{
 
-	SingletonDir dir = SingletonDir.getInstance();
+	private SharedSnakeDirection direction;
+	
+	public UserInput(SharedSnakeDirection direction)
+	{
+		super();
+		this.direction = direction;
+	}
+	
+	public void setSharedDirection(SharedSnakeDirection direction)
+	{
+		this.direction = direction;
+	}
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -26,22 +37,22 @@ public class UserInput implements KeyListener{
 		//Seta P/ baixo
         if (e.getKeyCode()==40)
         {
-        	dir.setDirection(EnumSnakeDirection.DOWN);
+        	direction.produce(EnumSnakeDirection.DOWN);
         }
         //Seta P/ cima        
         if (e.getKeyCode()==38)
         {
-        	dir.setDirection(EnumSnakeDirection.UP);
+        	direction.produce(EnumSnakeDirection.UP);
         }
         //Seta P/ direita
         if (e.getKeyCode()==39)
         {
-        	dir.setDirection(EnumSnakeDirection.RIGHT);
+        	direction.produce(EnumSnakeDirection.RIGHT);
         }
         //Seta P/ esquerda
         if (e.getKeyCode()==37)
         {
-        	dir.setDirection(EnumSnakeDirection.LEFT);
+        	direction.produce(EnumSnakeDirection.LEFT);
         }
     }
 

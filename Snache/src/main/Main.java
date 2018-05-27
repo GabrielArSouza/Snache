@@ -1,9 +1,9 @@
 package main;
 
 import controller.Game;
-import controller.EnumSnakeDirection;
+import controller.SharedSnakeDirection;
 import domain.Board;
-import domain.Snake;
+import io.UserInput;
 import presentation.FrmBoard;
 
 public class Main 
@@ -13,18 +13,15 @@ public class Main
 		FrmBoard frmBoard = new FrmBoard(50, 50);
 		frmBoard.setVisible(true);
 		Board board = new Board(50, 50);
+		
 		Game controller = new Game(frmBoard, board);
 		
-		// create and draw 3 random snakes
-		for(int i = 0; i < 3; ++i)
-		{
-			System.out.println("---------------------------");
-			Snake snake = controller.createSnake();
-			
-			if(snake != null)
-			{
-				controller.drawSnake(snake);
-			}
-		}		
+		SharedSnakeDirection sharedDirection = new SharedSnakeDirection(null);
+		UserInput myInput = new UserInput(sharedDirection);
+		controller.createSnake(sharedDirection);
+		
+
+		
+		
 	}
 }

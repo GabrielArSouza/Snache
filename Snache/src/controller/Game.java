@@ -1,10 +1,11 @@
 package controller;
 
 import java.awt.Color;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.Stack;
 
 import domain.Board;
@@ -12,7 +13,6 @@ import domain.BoardPiece;
 import domain.Snake;
 import domain.SnakeConstants;
 import domain.SnakePiece;
-import io.UserInput;
 import presentation.FrmBoard;
 
 /**
@@ -25,6 +25,7 @@ public class Game
 	private Board board;
 	private Stack<Color> availableColors;
 	private List<Snake> snakes;
+	private Map<Snake, Color> snakeColors;
 	
 	public Game(FrmBoard frmBoard, Board board)
 	{
@@ -41,7 +42,7 @@ public class Game
 		availableColors.addAll(allColors);
 	}
 	
-	private Color getColor()
+	private Color getAvailableColor()
 	{
 		Color color = availableColors.pop();
 		
@@ -51,20 +52,25 @@ public class Game
 		return color;
 	}
 	
-	public void drawSnake(Snake snake)
+	public void drawSnakes()
 	{
-		SnakePiece head = snake.getHead();
-		Color color = getColor();
+		frmBoard.clearBoard();
 		
-		frmBoard.setColorAt(head.getRow(), head.getColumn(), color);
-		
-		for(SnakePiece piece : snake.getBody())
+		for(Snake snake : snakes)
 		{
-			frmBoard.setColorAt(piece.getRow(), piece.getColumn(), color);
+			SnakePiece head = snake.getHead();
+			Color color = snakeColors.get(snake);
+			
+			frmBoard.setColorAt(head.getRow(), head.getColumn(), color);
+			
+			for(SnakePiece piece : snake.getBody())
+			{
+				frmBoard.setColorAt(piece.getRow(), piece.getColumn(), color);
+			}
 		}
 	}
 	
-	public Snake createSnake()
+	public boolean createSnake(SharedSnakeDirection sharedDirection)
 	{
 		EnumSnakeDirection direction = null;
 		SnakePiece headPiece = null;
@@ -121,66 +127,97 @@ public class Game
 		
 		if(headPiece == null)
 		{
-			return null;
+			return false;
 		}
 		
 		System.out.println("new snake: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
 		
-		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction);
-		this.fillShakeOnBoard(snake);
-		return snake;
-	}
-	
-	/**
-	 * Adiciona uma snake no tabuleiro do jogo
-	 * @param s a nova snake para o jogo
-	 */
-	public void addSnake ( Snake s )
-	{
-		snakes.add(s);
-	}
-	
-	public void moveSnakes ()
-	{
-		for (int i=0; i < snakes.size(); i++)
-		{			
-			// Consome movimento e move a snake
-			EnumSnakeDirection newDir = SingletonDir.getInstance().getDirection();
-			EnumSnakeDirection oldDir = snakes.get(i).getDirection();
-			
-			SnakePiece oldTail	 = snakes.get(i).getTail();
-			
-			snakes.get(i).move(newDir);
+		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction, sharedDirection);
+		Color color = getAvailableColor();
 		
-			//Verifica se Bateu
-			BoardPiece p = snakes.get(i).getHead();
-			if (p.getRow() < 0 || p.getRow() > board.getHeight() 
-					|| p.getColumn() <0 || p.getColumn() > board.getWidth())
+		snakeColors.put(snake, color);
+		snakes.add(snake);
+		fillSnakeOnBoard(snake);
+		
+		return true;
+	}
+
+	public void moveSnakes()
+	{
+		// using iterator so that we can delete snakes while iterating the snake list
+		ListIterator<Snake> snakeIterator = snakes.listIterator();
+		
+		while(snakeIterator.hasNext())
+		{
+			Snake snake = snakeIterator.next();
+			
+			// Current snake direction
+			EnumSnakeDirection oldDir = snake.getDirection();
+						
+			// Direction set by the user
+			EnumSnakeDirection newDir = snake.getSharedDirection().consume();
+			
+			// Valid direction changes
+			if( (newDir == EnumSnakeDirection.UP && oldDir != EnumSnakeDirection.DOWN) ||
+				(newDir == EnumSnakeDirection.DOWN && oldDir != EnumSnakeDirection.UP) ||
+				(newDir == EnumSnakeDirection.RIGHT && oldDir != EnumSnakeDirection.LEFT) ||
+				(newDir == EnumSnakeDirection.LEFT && oldDir != EnumSnakeDirection.RIGHT))
 			{
-				//Matar cobra
+				snake.setDirection(newDir);
 			}
-			else 
+			
+			SnakePiece oldTail	= snake.getTail();
+			
+			snake.move();
+			
+			SnakePiece newHead = snake.getHead();
+		
+			// the cell to which the snake is moving is empty
+			if(board.getBoardPiece(newHead.getRow(), newHead.getColumn()).isEmpty())
 			{
-				board.setBoardPiece(snakes.get(i).getHead());
-			}									
+				board.occupyBoardPiece(newHead);
+				board.freeBoardPiece(oldTail);
+			}
+			
+			// the cell isn't empty (either is a board edge or another snake): the snake dies!
+			else
+			{
+				killMovedSnake(snake, oldTail);
+				snakeIterator.remove();
+			}
 		}
 	}
 	
-	public void fillShakeOnBoard (Snake s)
+	public void killMovedSnake(Snake snake, SnakePiece oldTail)
 	{
-		board.setBoardPiece(s.getHead());
-		for (int i=0; i < s.getBody().size(); i++)
+		for(SnakePiece bodyPiece : snake.getBody())
+			board.freeBoardPiece(bodyPiece);
+		
+		board.freeBoardPiece(oldTail);
+	}
+	
+	public void fillSnakeOnBoard(Snake snake)
+	{
+		board.occupyBoardPiece(snake.getHead());
+		
+		for(SnakePiece bodyPiece : snake.getBody())
 		{
-			board.setBoardPiece(s.getBody().get(i));
+			board.occupyBoardPiece(bodyPiece);
 		}
 	}
 
-	public List<Snake> getSnakes() {
+	public List<Snake> getSnakes() 
+	{
 		return snakes;
 	}
 
-	public void setSnakes(List<Snake> snakes) {
+	public void setSnakes(List<Snake> snakes) 
+	{
 		this.snakes = snakes;
 	}
 	
+	public void mainLoop()
+	{
+		
+	}
  }
