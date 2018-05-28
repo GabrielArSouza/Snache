@@ -6,8 +6,6 @@ import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 
-import io.UserInput;
-
 public class FrmBoard extends JFrame
 {
 	private static final long serialVersionUID = -206230284397533789L;
@@ -27,7 +25,6 @@ public class FrmBoard extends JFrame
 		this.height = height;
 		this.setPreferredSize(new Dimension(height*pieceSize,width*pieceSize));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.addKeyListener(new UserInput());
 		this.setFocusable(true);
 		
 		layout = new GridLayout(height, width);

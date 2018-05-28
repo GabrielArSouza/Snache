@@ -1,6 +1,19 @@
 package controller;
 
+/**
+ * All possible movements for the snakes.
+ */
 public enum EnumSnakeDirection
 {
-	UP, LEFT, DOWN, RIGHT;
+	/** move up. */
+	UP,
+	
+	/** move left. */
+	LEFT,
+	
+	/** move down. */
+	DOWN,
+	
+	/** move right. */
+	RIGHT;
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import controller.EnumSnakeDirection;
-import controller.SharedSnakeDirection;
 
 public class Snake
 {
@@ -14,9 +13,8 @@ public class Snake
 	private SnakePiece head;
 	private List<SnakePiece> body;
 	private EnumSnakeDirection direction;
-	private SharedSnakeDirection sharedDirection;
 	
-	public Snake(int headRow, int headColumn, int bodySize, EnumSnakeDirection initialDirection, SharedSnakeDirection sharedDirection)
+	public Snake(int headRow, int headColumn, int bodySize, EnumSnakeDirection initialDirection)
 	{
 		this.head = new SnakePiece(headRow, headColumn);
 		this.body = new ArrayList<SnakePiece>();
@@ -45,7 +43,6 @@ public class Snake
 			}
 			
 			this.direction = initialDirection;
-			this.sharedDirection = sharedDirection;
 		}
 	}
 	
@@ -93,15 +90,14 @@ public class Snake
 	{
 		return body.get(bodySize-1);
 	}
-	
-	public SharedSnakeDirection getSharedDirection()
+		
+	@Override
+	public int hashCode()
 	{
-		return sharedDirection;
-	}
-	
-	public void setSharedDirection(SharedSnakeDirection direction)
-	{
-		this.sharedDirection = direction;
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((head == null) ? 0 : head.hashCode());
+		return result;
 	}
 
 	@Override

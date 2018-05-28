@@ -1,14 +1,28 @@
 package controller;
 
+/**
+ * Wraps a EnumSnakeDirection object to be shared.
+ */
 public class SharedSnakeDirection
 {
+	/** The object to be shared. */
 	private EnumSnakeDirection direction;
 
+	/**
+	 * Instantiates a new wrapper.
+	 *
+	 * @param direction the object to be shared
+	 */
 	public SharedSnakeDirection(EnumSnakeDirection direction)
 	{
 		this.direction = direction;
 	}
 
+	/**
+	 * Consume.
+	 *
+	 * @return the enum snake direction
+	 */
 	public EnumSnakeDirection consume()
 	{
 		EnumSnakeDirection dir = direction;
@@ -19,6 +33,11 @@ public class SharedSnakeDirection
 		return dir;
 	}
 
+	/**
+	 * Produce.
+	 *
+	 * @param direction the direction
+	 */
 	public void produce(EnumSnakeDirection direction)
 	{
 		if(this.direction != null)

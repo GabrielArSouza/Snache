@@ -3,6 +3,7 @@ package controller;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -16,25 +17,50 @@ import domain.SnakePiece;
 import presentation.FrmBoard;
 
 /**
- * @author gabriel
+ * The Class Game.
  *
+ * @author gabriel
  */
 public class Game
 {
+	/** Reference to the board UI. */
 	private FrmBoard frmBoard;
+	
+	/** Reference to the board logic. */
 	private Board board;
+	
+	/** Colors that can be used in new snakes. */
 	private Stack<Color> availableColors;
+	
+	/** Current snakes in the board. */
 	private List<Snake> snakes;
+	
+	/** Colors assigned to the current snakes. */
 	private Map<Snake, Color> snakeColors;
 	
+	/** Direction changers assigned to the current snakes. */
+	private Map<Snake, SharedSnakeDirection> snakeSharedDirections;
+	
+	/**
+	 * Instantiates a new game.
+	 *
+	 * @param frmBoard board UI
+	 * @param board board logic
+	 */
 	public Game(FrmBoard frmBoard, Board board)
 	{
 		this.frmBoard = frmBoard;
 		this.board = board;
+		this.snakeColors = new HashMap<Snake, Color>();
+		this.snakeSharedDirections = new HashMap<Snake, SharedSnakeDirection>();
 		this.availableColors = new Stack<Color>();
 		resetAvailableColors();
 	}
 	
+	/**
+	 * Resets the stack of available colors.
+	 * It shuffles the array of all possible colors and put the colors on a stack.
+	 */
 	private void resetAvailableColors()
 	{
 		List<Color> allColors = Arrays.asList(SnakeConstants.COLORS);
@@ -42,6 +68,11 @@ public class Game
 		availableColors.addAll(allColors);
 	}
 	
+	/**
+	 * Gets an available color from the stack of colors.
+	 *
+	 * @return the top color on the stack of colors.
+	 */
 	private Color getAvailableColor()
 	{
 		Color color = availableColors.pop();
@@ -52,6 +83,10 @@ public class Game
 		return color;
 	}
 	
+	/**
+	 * Draw snakes.
+	 * It clears the board first and then paint all the current snakes.
+	 */
 	public void drawSnakes()
 	{
 		frmBoard.clearBoard();
@@ -70,6 +105,13 @@ public class Game
 		}
 	}
 	
+	/**
+	 * Creates a snake.
+	 *
+	 * @param sharedDirection direction changer associated to the new snake
+	 * @return true, if the snake was successfully created
+	 * 		   false, otherwise
+	 */
 	public boolean createSnake(SharedSnakeDirection sharedDirection)
 	{
 		EnumSnakeDirection direction = null;
@@ -132,9 +174,10 @@ public class Game
 		
 		System.out.println("new snake: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
 		
-		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction, sharedDirection);
+		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction);
 		Color color = getAvailableColor();
 		
+		snakeSharedDirections.put(snake, sharedDirection);
 		snakeColors.put(snake, color);
 		snakes.add(snake);
 		fillSnakeOnBoard(snake);
@@ -142,8 +185,14 @@ public class Game
 		return true;
 	}
 
+	/**
+	 * Moves all the snakes.
+	 */
 	public void moveSnakes()
 	{
+		// shuffles the snake list to *try* to be fair with the players
+		Collections.shuffle(snakes);
+		
 		// using iterator so that we can delete snakes while iterating the snake list
 		ListIterator<Snake> snakeIterator = snakes.listIterator();
 		
@@ -155,7 +204,7 @@ public class Game
 			EnumSnakeDirection oldDir = snake.getDirection();
 						
 			// Direction set by the user
-			EnumSnakeDirection newDir = snake.getSharedDirection().consume();
+			EnumSnakeDirection newDir = snakeSharedDirections.get(snake).consume();
 			
 			// Valid direction changes
 			if( (newDir == EnumSnakeDirection.UP && oldDir != EnumSnakeDirection.DOWN) ||
@@ -188,14 +237,30 @@ public class Game
 		}
 	}
 	
+	/**
+	 * Kills a snake that has moved already.
+	 * Frees the space previously occupied by the snake, and remove
+	 * references to that snake on the map attributes.
+	 *
+	 * @param snake the snake
+	 * @param oldTail the old tail of the snake to be killed
+	 */
 	public void killMovedSnake(Snake snake, SnakePiece oldTail)
 	{
 		for(SnakePiece bodyPiece : snake.getBody())
 			board.freeBoardPiece(bodyPiece);
 		
 		board.freeBoardPiece(oldTail);
+		
+		snakeColors.remove(snake);
+		snakeSharedDirections.remove(snake);
 	}
 	
+	/**
+	 * Makes a snake occupy some positions on the board.
+	 *
+	 * @param snake the snake
+	 */
 	public void fillSnakeOnBoard(Snake snake)
 	{
 		board.occupyBoardPiece(snake.getHead());
@@ -204,20 +269,5 @@ public class Game
 		{
 			board.occupyBoardPiece(bodyPiece);
 		}
-	}
-
-	public List<Snake> getSnakes() 
-	{
-		return snakes;
-	}
-
-	public void setSnakes(List<Snake> snakes) 
-	{
-		this.snakes = snakes;
-	}
-	
-	public void mainLoop()
-	{
-		
 	}
  }
