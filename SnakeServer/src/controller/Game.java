@@ -14,7 +14,7 @@ import domain.BoardPiece;
 import domain.Snake;
 import domain.SnakeConstants;
 import domain.SnakePiece;
-import presentation.FrmBoard;
+import presentation.BoardPieceMatrix;
 
 /**
  * The Class Game.
@@ -24,7 +24,7 @@ import presentation.FrmBoard;
 public class Game
 {
 	/** Reference to the board UI. */
-	private FrmBoard frmBoard;
+	private BoardPieceMatrix boardMatrix;
 	
 	/** Reference to the board logic. */
 	private Board board;
@@ -47,9 +47,9 @@ public class Game
 	 * @param frmBoard board UI
 	 * @param board board logic
 	 */
-	public Game(FrmBoard frmBoard, Board board)
+	public Game(BoardPieceMatrix boardMatrix, Board board)
 	{
-		this.frmBoard = frmBoard;
+		this.boardMatrix = boardMatrix;
 		this.board = board;
 		this.snakeColors = new HashMap<Snake, Color>();
 		this.snakeSharedDirections = new HashMap<Snake, SharedSnakeDirection>();
@@ -89,18 +89,18 @@ public class Game
 	 */
 	public void drawSnakes()
 	{
-		frmBoard.clearBoard();
+		boardMatrix.clearBoard();
 		
 		for(Snake snake : snakes)
 		{
 			SnakePiece head = snake.getHead();
 			Color color = snakeColors.get(snake);
 			
-			frmBoard.setColorAt(head.getRow(), head.getColumn(), color);
+			boardMatrix.setColorAt(head.getRow(), head.getColumn(), color);
 			
 			for(SnakePiece piece : snake.getBody())
 			{
-				frmBoard.setColorAt(piece.getRow(), piece.getColumn(), color);
+				boardMatrix.setColorAt(piece.getRow(), piece.getColumn(), color);
 			}
 		}
 	}
@@ -220,7 +220,15 @@ public class Game
 			snake.move();
 			
 			SnakePiece newHead = snake.getHead();
-		
+			boolean newHeadOnLimits = false;
+			
+			// the new head respects the board edges
+			if(newHead.getRow() >= 0 && newHead.getRow() < board.getHeight() &&
+			   newHead.getColumn() >= 0 && newHead.getColumn() < board.getWidth())
+			{
+				newHeadOnLimits = true;
+			}
+			
 			// the cell to which the snake is moving is empty
 			if(board.getBoardPiece(newHead.getRow(), newHead.getColumn()).isEmpty())
 			{
@@ -231,7 +239,7 @@ public class Game
 			// the cell isn't empty (either is a board edge or another snake): the snake dies!
 			else
 			{
-				killMovedSnake(snake, oldTail);
+				killMovedSnake(snake, oldTail, newHeadOnLimits);
 				snakeIterator.remove();
 			}
 		}
@@ -245,12 +253,13 @@ public class Game
 	 * @param snake the snake
 	 * @param oldTail the old tail of the snake to be killed
 	 */
-	public void killMovedSnake(Snake snake, SnakePiece oldTail)
+	public void killMovedSnake(Snake snake, SnakePiece oldTail, boolean headOnLimits)
 	{
+		if(headOnLimits)
+			board.freeBoardPiece(oldTail);
+		
 		for(SnakePiece bodyPiece : snake.getBody())
 			board.freeBoardPiece(bodyPiece);
-		
-		board.freeBoardPiece(oldTail);
 		
 		snakeColors.remove(snake);
 		snakeSharedDirections.remove(snake);
