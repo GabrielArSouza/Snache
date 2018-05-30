@@ -19,6 +19,7 @@ public class SocketClient
 {
 	/** Socket by which the communication will be made. */
 	private DatagramSocket socket;
+
 	
 	/** Singleton instance  whose snake direction changes will be caught of. */
 	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();

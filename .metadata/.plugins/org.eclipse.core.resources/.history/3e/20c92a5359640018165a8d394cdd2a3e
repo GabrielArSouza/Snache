@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 
 import controller.SingletonSnakeDirectionChange;
 
+// TODO: Auto-generated Javadoc
 /**
  * Makes the client-side communication between the player's game, that behaves
  * as a client, and the game's server. The client sends commands to the server
@@ -19,6 +20,7 @@ public class SocketClient
 {
 	/** Socket by which the communication will be made. */
 	private DatagramSocket socket;
+
 	
 	/** Singleton instance  whose snake direction changes will be caught of. */
 	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();
