@@ -7,48 +7,60 @@ import controller.EnumSnakeDirection;
 import controller.SingletonSnakeDirectionChange;
 
 /**
- * @author gabriel
- *
+ * Manages the "low-level" communication between the player and the keyboard.
+ * This class converts the interaction of the player with the keyboard into
+ * actual commands in the game.
  */
 public class UserInput implements KeyListener
 {
-	private SingletonSnakeDirectionChange sharedDirection = SingletonSnakeDirectionChange.getInstance();
 	
+	/** (Unique) instance of the singleton where the player commands will be stored. */
+	private SingletonSnakeDirectionChange sharedDirection = SingletonSnakeDirectionChange.getInstance();
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
-		// TODO Auto-generated method stub
-
+		// doesn't matter in this game
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
-		// Seta P/ baixo
+		// down arrow
 		if(e.getKeyCode() == 40)
 		{
 			sharedDirection.produce(EnumSnakeDirection.DOWN);
 		}
-		// Seta P/ cima
-		if(e.getKeyCode() == 38)
+		
+		// up arrow
+		else if(e.getKeyCode() == 38)
 		{
 			sharedDirection.produce(EnumSnakeDirection.UP);
 		}
-		// Seta P/ direita
+		// right arrow
 		if(e.getKeyCode() == 39)
 		{
 			sharedDirection.produce(EnumSnakeDirection.RIGHT);
 		}
-		// Seta P/ esquerda
+		// left arrow
 		if(e.getKeyCode() == 37)
 		{
 			sharedDirection.produce(EnumSnakeDirection.LEFT);
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
-		// TODO Auto-generated method stub
+		// doesn't matter in this game
 	}
 }

@@ -1,6 +1,5 @@
 package controller;
 
-// TODO: Auto-generated Javadoc
 /**
  * Manages the snake direction change given by the user. This singleton ensures
  * that if the user type many commands before they are sent to the server, only
