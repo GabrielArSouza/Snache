@@ -2,12 +2,12 @@ package controller;
 
 public class SingletonSnakeDirection
 {
-	private String direction;
+	private EnumSnakeDirection direction;
 	private static SingletonSnakeDirection instance = new SingletonSnakeDirection();
 	
     private SingletonSnakeDirection()
 	{
-		this.direction = "";
+		this.direction = null;
 	}
     
     public static SingletonSnakeDirection getInstance()
@@ -15,19 +15,19 @@ public class SingletonSnakeDirection
     	return instance;
     }
 	
-	public String consume()
+	public EnumSnakeDirection consume()
 	{
-		String res = direction;
+		EnumSnakeDirection res = direction;
 		
-		if(!direction.isEmpty())
-			direction = "";
+		if(direction != null)
+			direction = null;
 		
 		return res;
 	}
 	
-	public void produce(String newDirection)
+	public void produce(EnumSnakeDirection newDirection)
 	{
-		if(direction.isEmpty())
+		if(direction == null)
 			direction = newDirection;
 	}
 }

@@ -40,7 +40,7 @@ public class SocketClient
 			
 			while(true)
 			{
-				direction = snakeDirection.consume();
+				direction = snakeDirection.consume().toString();
 				
 				// the user didn't move the snake
 				if(direction.isEmpty())

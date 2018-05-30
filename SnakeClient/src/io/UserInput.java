@@ -27,22 +27,22 @@ public class UserInput implements KeyListener
 		// Seta P/ baixo
 		if(e.getKeyCode() == 40)
 		{
-			sharedDirection.produce(EnumSnakeDirection.DOWN.toString());
+			sharedDirection.produce(EnumSnakeDirection.DOWN);
 		}
 		// Seta P/ cima
 		if(e.getKeyCode() == 38)
 		{
-			sharedDirection.produce(EnumSnakeDirection.UP.toString());
+			sharedDirection.produce(EnumSnakeDirection.UP);
 		}
 		// Seta P/ direita
 		if(e.getKeyCode() == 39)
 		{
-			sharedDirection.produce(EnumSnakeDirection.RIGHT.toString());
+			sharedDirection.produce(EnumSnakeDirection.RIGHT);
 		}
 		// Seta P/ esquerda
 		if(e.getKeyCode() == 37)
 		{
-			sharedDirection.produce(EnumSnakeDirection.LEFT.toString());
+			sharedDirection.produce(EnumSnakeDirection.LEFT);
 		}
 	}
 
