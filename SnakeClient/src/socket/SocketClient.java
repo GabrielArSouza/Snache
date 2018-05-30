@@ -7,20 +7,19 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import controller.EnumSnakeDirection;
-import controller.SingletonSnakeDirection;
+import controller.SingletonSnakeDirectionChange;
 
 public class SocketClient
 {
 	private DatagramSocket socket;
-	private SingletonSnakeDirection snakeDirection = SingletonSnakeDirection.getInstance();
+	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();
 	
 	public void init()
 	{
 		try
 		{
 			socket = new DatagramSocket();
-			sendToServer();
+			sendDataToServer();
 		} 
 		
 		catch (SocketException e)
@@ -30,7 +29,7 @@ public class SocketClient
 		}
 	}
 	
-	public void sendToServer()
+	public void sendDataToServer()
 	{
 		String direction;
 		
@@ -41,13 +40,6 @@ public class SocketClient
 			while(true)
 			{
 				direction = snakeDirection.consume().toString();
-				
-				// the user didn't move the snake
-				if(direction.isEmpty())
-				{
-					direction = EnumSnakeDirection.DONT_MOVE.toString();
-				}
-				
 				System.out.println("direction sent to server: " + direction);
 				
 				byte[] dataToSend = direction.getBytes();

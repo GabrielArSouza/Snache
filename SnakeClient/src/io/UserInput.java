@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import controller.EnumSnakeDirection;
-import controller.SingletonSnakeDirection;
+import controller.SingletonSnakeDirectionChange;
 
 /**
  * @author gabriel
@@ -12,7 +12,7 @@ import controller.SingletonSnakeDirection;
  */
 public class UserInput implements KeyListener
 {
-	private SingletonSnakeDirection sharedDirection = SingletonSnakeDirection.getInstance();
+	private SingletonSnakeDirectionChange sharedDirection = SingletonSnakeDirectionChange.getInstance();
 	
 	@Override
 	public void keyTyped(KeyEvent e)

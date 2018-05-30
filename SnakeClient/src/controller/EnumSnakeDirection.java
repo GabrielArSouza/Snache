@@ -1,27 +1,29 @@
 package controller;
 
 /**
- * All possible movements for the snakes. 
+ * Direction of a snake.
+ * This class is used to decide to which direction a snake should move.
+ *  
  * Based on: http://mrmcgeek.blogspot.com/2009/06/custom-string-values-for-enum-in-java.html
  */
 public enum EnumSnakeDirection
 {
-	/** move up. */
+	/** up direction. */
 	UP ("U"),
 	
-	/** move left. */
+	/** left direction. */
 	LEFT ("L"),
 	
-	/** move down. */
+	/** down direction. */
 	DOWN ("D"),
 	
-	/** move right. */
+	/** right direction. */
 	RIGHT ("R"),
 	
-	/** don't move. */
-	DONT_MOVE ("N");
+	/** in case of direction change, this value means that the direction didn't change. */
+	SAME ("S");
 	
-	/** String representation of the enum value. */
+	/** String representation of the EnumSnakeDirection value. */
 	private String direction;
 	
 	/**
