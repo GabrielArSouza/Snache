@@ -32,6 +32,11 @@ public class SharedSnakeDirection
 		
 		return dir;
 	}
+	
+	public void produce(String direction)
+	{
+		produce(EnumSnakeDirection.getValue(direction));
+	}
 
 	/**
 	 * Produce.
@@ -47,5 +52,10 @@ public class SharedSnakeDirection
 		{
 			// ignore;
 		}
+	}
+	
+	public boolean hasResource()
+	{
+		return direction != null;
 	}
 }

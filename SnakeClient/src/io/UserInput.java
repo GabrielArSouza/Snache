@@ -3,6 +3,7 @@ package io;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import controller.EnumSnakeDirection;
 import controller.SingletonSnakeDirection;
 
 /**
@@ -23,26 +24,25 @@ public class UserInput implements KeyListener
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
-		System.out.println("Pressed");
 		// Seta P/ baixo
 		if(e.getKeyCode() == 40)
 		{
-			sharedDirection.produce("D");
+			sharedDirection.produce(EnumSnakeDirection.DOWN.toString());
 		}
 		// Seta P/ cima
 		if(e.getKeyCode() == 38)
 		{
-			sharedDirection.produce("U");
+			sharedDirection.produce(EnumSnakeDirection.UP.toString());
 		}
 		// Seta P/ direita
 		if(e.getKeyCode() == 39)
 		{
-			sharedDirection.produce("R");
+			sharedDirection.produce(EnumSnakeDirection.RIGHT.toString());
 		}
 		// Seta P/ esquerda
 		if(e.getKeyCode() == 37)
 		{
-			sharedDirection.produce("L");
+			sharedDirection.produce(EnumSnakeDirection.LEFT.toString());
 		}
 	}
 

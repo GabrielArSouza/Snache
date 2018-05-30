@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ public class Game
 	{
 		this.boardMatrix = boardMatrix;
 		this.board = board;
+		this.snakes = new ArrayList<Snake>();
 		this.snakeColors = new HashMap<Snake, Color>();
 		this.snakeSharedDirections = new HashMap<Snake, SharedSnakeDirection>();
 		this.availableColors = new Stack<Color>();
@@ -172,7 +174,7 @@ public class Game
 			return false;
 		}
 		
-		System.out.println("new snake: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
+		System.out.println("snake created: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
 		
 		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction);
 		Color color = getAvailableColor();
