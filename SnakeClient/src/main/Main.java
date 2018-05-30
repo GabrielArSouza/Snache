@@ -10,6 +10,6 @@ public class Main
 		FrmBoard frmBoard = new FrmBoard(50, 50);
 		frmBoard.setVisible(true);
 		SocketClient socketClient = new SocketClient();
-		socketClient.init();
+		socketClient.initSocket();
 	}
 }

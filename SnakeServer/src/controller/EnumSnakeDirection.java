@@ -23,7 +23,7 @@ public enum EnumSnakeDirection
 	/** in case of direction change, this value means that the direction didn't change. */
 	SAME ("S");
 	
-	/** String representation of the enum value. */
+	/** String representation of the EnumSnakeDirection value. */
 	private String direction;
 	
 	/**

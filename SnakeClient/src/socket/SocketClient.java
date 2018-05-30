@@ -14,7 +14,7 @@ public class SocketClient
 	private DatagramSocket socket;
 	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();
 	
-	public void init()
+	public void initSocket()
 	{
 		try
 		{
