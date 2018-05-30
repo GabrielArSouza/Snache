@@ -1,0 +1,90 @@
+package socket;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import controller.SingletonSnakeDirectionChange;
+
+// TODO: Auto-generated Javadoc
+/**
+ * Makes the client-side communication between the player's game, that behaves
+ * as a client, and the game's server. The client sends commands to the server
+ * to change the direction of a snake, and receives a copy of the current state
+ * of the board.
+ */
+public class SocketClient
+{
+	/** Socket by which the communication will be made. */
+	private DatagramSocket socket;
+
+	
+	/** Singleton instance  whose snake direction changes will be caught of. */
+	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();
+
+	/**
+	 * Initializes the socket and calls its main method.
+	 */
+	public void initSocket()
+	{
+		try
+		{
+			socket = new DatagramSocket();
+			sendDataToServer();
+		}
+
+		catch (SocketException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Sends data to the server.
+	 */
+	public void sendDataToServer()
+	{
+		String direction;
+
+		try
+		{
+			// ip address of the player
+			InetAddress ip = InetAddress.getByName("localhost");
+
+			while(true)
+			{
+				direction = snakeDirection.consume().toString();
+				System.out.println("direction sent to server: " + direction);
+
+				byte[] dataToSend = direction.getBytes();
+				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, ip, 6666);
+				socket.send(packToSend);
+
+				Thread.sleep(2000);
+			}
+
+		}
+
+		catch (UnknownHostException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

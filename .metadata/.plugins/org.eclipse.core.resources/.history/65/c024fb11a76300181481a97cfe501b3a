@@ -1,0 +1,6 @@
+package socket;
+
+public class ClientInfo
+{
+	private int deadCont = 3;
+}

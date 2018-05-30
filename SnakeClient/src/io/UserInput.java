@@ -13,11 +13,15 @@ import controller.SingletonSnakeDirectionChange;
  */
 public class UserInput implements KeyListener
 {
-	
-	/** (Unique) instance of the singleton where the player commands will be stored. */
+
+	/**
+	 * (Unique) instance of the singleton where the player commands will be stored.
+	 */
 	private SingletonSnakeDirectionChange sharedDirection = SingletonSnakeDirectionChange.getInstance();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc) This event isn't handled in this game.
+	 * 
 	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
 	 */
 	@Override
@@ -26,7 +30,11 @@ public class UserInput implements KeyListener
 		// doesn't matter in this game
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc) When the player type an arrow key, this event is translated
+	 * into a snake direction change. That change is passed to the singleton to be
+	 * (possibly) sent to the server later
+	 * 
 	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
 	 */
 	@Override
@@ -37,7 +45,7 @@ public class UserInput implements KeyListener
 		{
 			sharedDirection.produce(EnumSnakeDirection.DOWN);
 		}
-		
+
 		// up arrow
 		else if(e.getKeyCode() == 38)
 		{
@@ -55,7 +63,9 @@ public class UserInput implements KeyListener
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc) This event isn't handled in this application.
+	 * 
 	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
 	 */
 	@Override

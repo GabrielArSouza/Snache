@@ -1,0 +1,8 @@
+package presentation;
+
+public class BoardPieceMatrix
+{
+	private FrmBoardPiece frmBoardPieces[][];
+	private int width;
+	private int height;
+}

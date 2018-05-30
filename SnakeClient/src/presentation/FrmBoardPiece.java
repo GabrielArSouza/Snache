@@ -7,8 +7,8 @@ import javax.swing.JButton;
 
 /**
  * The FrmBoardPiece class represents a unique cell in the board view. It
- * extends a JButton but some properties, like focus and borders, are discarded
- * so that the view, in the player's perspective, is just a static filled square.
+ * extends a JButton but some properties, like focus and borders, are discarded.
+ * The view, in the player's perspective, is just a static filled square.
  */
 public class FrmBoardPiece extends JButton
 {
@@ -46,7 +46,7 @@ public class FrmBoardPiece extends JButton
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 * Changes the color, fills a square,
 	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
 	 */
 	@Override

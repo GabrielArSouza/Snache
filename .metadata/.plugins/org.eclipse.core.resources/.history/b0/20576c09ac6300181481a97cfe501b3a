@@ -1,0 +1,34 @@
+package controller;
+
+/**
+ * All possible movements for the snakes.
+ */
+public enum EnumSnakeDirection
+{
+	/** move up. */
+	UP ("U"),
+	
+	/** move left. */
+	LEFT ("L"),
+	
+	/** move down. */
+	DOWN ("D"),
+	
+	/** move right. */
+	RIGHT ("R"),
+	
+	/** don't move. */
+	DONT_MOVE ("N");
+	
+	private String direction;
+	
+	private EnumSnakeDirection(String direction)
+	{
+		this.direction = direction;
+	}
+	
+	public String toString()
+	{
+		return direction;
+	}
+}

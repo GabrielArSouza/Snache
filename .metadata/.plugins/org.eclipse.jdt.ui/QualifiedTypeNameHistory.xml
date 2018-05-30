@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="javax.swing.JFrame"/>
+<fullyQualifiedTypeName name="javax.swing.JButton"/>
+<fullyQualifiedTypeName name="controller.BoardController"/>
+<fullyQualifiedTypeName name="presentation.FrmBoard"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="domain.SnakeConstants"/>
+<fullyQualifiedTypeName name="domain.BoardPiece"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="presentation.BoardPieceMatrix"/>
+<fullyQualifiedTypeName name="socket.SocketServer"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.io.OutputStream"/>
+<fullyQualifiedTypeName name="java.net.DatagramSocket"/>
+<fullyQualifiedTypeName name="controller.SingletonSnakeDirection"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="socket.clientThread"/>
+<fullyQualifiedTypeName name="socket.ClientThread"/>
+<fullyQualifiedTypeName name="socket.SocketClient"/>
+<fullyQualifiedTypeName name="socket.SocketServerSnake"/>
+<fullyQualifiedTypeName name="controller.EnumSnakeDirection"/>
+<fullyQualifiedTypeName name="presentation.FrmBoardPiece"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.util.Map.Entry"/>
+<fullyQualifiedTypeName name="java.net.InetAddress"/>
+<fullyQualifiedTypeName name="socket.ClientInfo"/>
+<fullyQualifiedTypeName name="controller.SharedSnakeDirection"/>
+<fullyQualifiedTypeName name="java.lang.Runnable"/>
+</qualifiedTypeNameHistroy>

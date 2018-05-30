@@ -72,6 +72,7 @@ public class SocketServerSnake
 		System.out.println("updating snakes...");
 		killInactiveClients();
 		game.moveSnakes();
+		game.drawSnakes();
 	}
 	
 	private void killInactiveClients()
@@ -102,6 +103,7 @@ public class SocketServerSnake
 			{
 				DatagramPacket packFromClient = new DatagramPacket(dataBuffFromClient, dataBuffFromClient.length);
 				socket.receive(packFromClient);
+				
 				String snakeDirectionFromClient = new String(packFromClient.getData());
 				
 				InetAddress clientIP = packFromClient.getAddress();

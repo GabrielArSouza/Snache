@@ -1,0 +1,22 @@
+package controller;
+
+/**
+ * All possible movements for the snakes.
+ */
+public enum EnumSnakeDirection
+{
+	/** move up. */
+	UP ("U"),
+	
+	/** move left. */
+	LEFT,
+	
+	/** move down. */
+	DOWN,
+	
+	/** move right. */
+	RIGHT,
+	
+	/** don't move. */
+	NO_MOVE;
+}

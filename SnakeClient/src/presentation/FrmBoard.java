@@ -111,6 +111,8 @@ public class FrmBoard extends JFrame
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * Makes this frame focusable so that key listeners can be attached to it.
+	 * 
 	 * @see java.awt.Component#isFocusable()
 	 */
 	public boolean isFocusable()

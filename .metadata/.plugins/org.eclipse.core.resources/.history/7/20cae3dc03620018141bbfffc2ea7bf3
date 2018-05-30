@@ -1,0 +1,86 @@
+package domain;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BoardPiece.
+ */
+public class BoardPiece
+{
+	
+	/** The row. */
+	private int row;
+	
+	/** The column. */
+	private int column;
+	
+	/** The empty. */
+	private boolean empty;
+	
+	/**
+	 * Instantiates a new board piece.
+	 *
+	 * @param row the row
+	 * @param column the column
+	 */
+	public BoardPiece(int row, int column)
+	{
+		this.row = row;
+		this.column = column;
+		this.empty = true;
+	}
+	
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
+	public boolean isEmpty()
+	{
+		return empty;
+	}
+	
+	/**
+	 * Gets the row.
+	 *
+	 * @return the row
+	 */
+	public int getRow()
+	{
+		return row;
+	}
+	
+	/**
+	 * Gets the column.
+	 *
+	 * @return the column
+	 */
+	public int getColumn()
+	{
+		return column;
+	}
+
+	/**
+	 * Sets the row.
+	 *
+	 * @param row the new row
+	 */
+	public void setRow(int row)
+	{
+		this.row = row;
+	}
+
+	/**
+	 * Sets the column.
+	 *
+	 * @param column the new column
+	 */
+	public void setColumn(int column)
+	{
+		this.column = column;
+	}
+	
+	public void setEmpty(boolean empty)
+	{
+		this.empty = empty;
+	}
+}

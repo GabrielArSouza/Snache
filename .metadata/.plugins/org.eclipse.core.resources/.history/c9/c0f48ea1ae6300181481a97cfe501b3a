@@ -1,0 +1,33 @@
+package controller;
+
+public class SingletonSnakeDirection
+{
+	private EnumSnakeDirection direction;
+	private static SingletonSnakeDirection instance = new SingletonSnakeDirection();
+	
+    private SingletonSnakeDirection()
+	{
+		this.direction = null;
+	}
+    
+    public static SingletonSnakeDirection getInstance()
+    {
+    	return instance;
+    }
+	
+	public String consume()
+	{
+		EnumSnakeDirection res = direction;
+		
+		if(direction != null)
+			direction = null;
+		
+		return res;
+	}
+	
+	public void produce(String newDirection)
+	{
+		if(direction.isEmpty())
+			direction = newDirection;
+	}
+}
