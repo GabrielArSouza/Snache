@@ -31,4 +31,18 @@ public class FrmBoardPiece extends JButton
          g.fillRect(0, 0, getWidth(), getHeight());
          super.paintComponent(g);
      }
+	 
+	 @Override
+	 public String toString()
+	 {
+		 if(backgroundColor == Color.WHITE)
+		 {
+			 return ".";
+		 }
+		 
+		 else
+		 {
+			 return "@";
+		 }
+	 }
 }

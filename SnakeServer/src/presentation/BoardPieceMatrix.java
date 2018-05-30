@@ -49,4 +49,21 @@ public class BoardPieceMatrix
 	{
 		return frmBoardPieces;
 	}
+	
+	public String toString()
+	{
+		String res = "";
+		
+		for(int i=0; i < this.height; i++)
+		{
+			for(int j=0; j < this.width; j++)
+			{
+				res += frmBoardPieces.toString();
+			}
+			
+			res += "\n";
+		}
+		
+		return res;
+	}
 }

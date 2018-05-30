@@ -1,6 +1,7 @@
 package socket;
 
 import controller.SharedSnakeDirection;
+import domain.Snake;
 
 public class ClientInfo
 {
@@ -8,17 +9,24 @@ public class ClientInfo
 	private int deadCont;
 	private SharedSnakeDirection sharedSnakeDirection;
 	private boolean directionUpdated;
+	private Snake snake;
 	
-	public ClientInfo(SharedSnakeDirection sharedSnakeDirection)
+	public ClientInfo(SharedSnakeDirection sharedSnakeDirection, Snake snake)
 	{
 		this.sharedSnakeDirection = sharedSnakeDirection;
 		deadCont = MAX_ITERATIONS;
 		directionUpdated = false;
+		this.snake = snake;
 	}
 	
-	public int getDeadCont()
+	public Snake getSnake()
 	{
-		return deadCont;
+		return snake;
+	}
+	
+	public boolean isActive()
+	{
+		return deadCont != 0;
 	}
 	
 	public void decreaseDeadCont()
@@ -35,5 +43,10 @@ public class ClientInfo
 			deadCont = MAX_ITERATIONS;
 		}
 		
+	}
+	
+	public void setDirectionUpdated(boolean directionUpdated)
+	{
+		this.directionUpdated = directionUpdated;
 	}
 }

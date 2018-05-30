@@ -6,11 +6,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import controller.EnumSnakeDirection;
 import controller.Game;
 import controller.SharedSnakeDirection;
+import domain.Snake;
 
 public class SocketServerSnake
 {
@@ -37,11 +39,56 @@ public class SocketServerSnake
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		Thread threadUpdate = new Thread(new Runnable() {
+			
+			@Override
+			public void run()
+			{
+				try
+				{
+					while(true)
+					{
+						update();
+						Thread.sleep(2000);
+					}
+					
+				}
+				
+				catch (InterruptedException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				game.printBoardMatrix();
+				
+			}
+		});
+		
+		threadUpdate.start();
 	}
 	
-	public void update()
+	private void update()
 	{
+		killInactiveClients();
+		game.moveSnakes();
+	}
+	
+	private void killInactiveClients()
+	{
+		Iterator<Map.Entry<InetAddress, ClientInfo>> entryIterator = clientInfos.entrySet().iterator();
 		
+		while(entryIterator.hasNext())
+		{
+			ClientInfo clientInfo = entryIterator.next().getValue();
+			
+			if(! clientInfo.isActive() )
+			{
+				game.killInactiveSnake(clientInfo.getSnake());
+				entryIterator.remove();
+			}
+		}
 	}
 
 	public void receiveFromClients() 
@@ -68,9 +115,11 @@ public class SocketServerSnake
 					EnumSnakeDirection directionAsEnum = EnumSnakeDirection.getValue(snakeDirectionFromClient);
 					SharedSnakeDirection sharedDirection = new SharedSnakeDirection(directionAsEnum);
 					
-					if(game.createSnake(sharedDirection))
+					Snake snake = game.createSnake(sharedDirection);
+					
+					if(snake != null)
 					{
-						clientInfo = new ClientInfo(sharedDirection);
+						clientInfo = new ClientInfo(sharedDirection, snake);
 						clientInfos.put(clientIP, clientInfo);
 					}
 					

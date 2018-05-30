@@ -114,7 +114,7 @@ public class Game
 	 * @return true, if the snake was successfully created
 	 * 		   false, otherwise
 	 */
-	public boolean createSnake(SharedSnakeDirection sharedDirection)
+	public Snake createSnake(SharedSnakeDirection sharedDirection)
 	{
 		EnumSnakeDirection direction = null;
 		SnakePiece headPiece = null;
@@ -171,7 +171,7 @@ public class Game
 		
 		if(headPiece == null)
 		{
-			return false;
+			return null;
 		}
 		
 		System.out.println("snake created: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
@@ -184,7 +184,7 @@ public class Game
 		snakes.add(snake);
 		fillSnakeOnBoard(snake);
 		
-		return true;
+		return snake;
 	}
 
 	/**
@@ -247,6 +247,19 @@ public class Game
 		}
 	}
 	
+	public void killInactiveSnake(Snake snake)
+	{
+		board.freeBoardPiece(snake.getHead());
+		
+		for(SnakePiece bodyPiece : snake.getBody())
+			board.freeBoardPiece(bodyPiece);
+		
+		snakeColors.remove(snake);
+		snakeSharedDirections.remove(snake);
+		
+		snakes.remove(snake);
+	}
+	
 	/**
 	 * Kills a snake that has moved already.
 	 * Frees the space previously occupied by the snake, and remove
@@ -280,5 +293,10 @@ public class Game
 		{
 			board.occupyBoardPiece(bodyPiece);
 		}
+	}
+	
+	public void printBoardMatrix()
+	{
+		System.out.println(boardMatrix);
 	}
  }
