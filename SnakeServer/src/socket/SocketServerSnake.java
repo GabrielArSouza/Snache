@@ -60,7 +60,7 @@ public class SocketServerSnake
 				InetAddress clientIP = packFromClient.getAddress();
 				ClientInfo clientInfo = clientInfos.get(clientIP);
 				
-				System.out.println("Received direction from client" + clientIP+ ": " + snakeDirectionFromClient);
+				System.out.println("Received direction from client " + clientIP+ ": " + snakeDirectionFromClient);
 				
 				// new player
 				if(clientInfo == null)
@@ -80,7 +80,7 @@ public class SocketServerSnake
 					}
 				}
 				
-				// player already exists: update the direction of his/her snake
+				// player already exists: update the direction of his/her snake if it wasn't updated yet
 				else
 				{
 					clientInfo.updateDirection(snakeDirectionFromClient);
