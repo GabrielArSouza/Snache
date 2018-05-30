@@ -50,6 +50,7 @@ public class BoardPieceMatrix
 		return frmBoardPieces;
 	}
 	
+	@Override
 	public String toString()
 	{
 		String res = "";
@@ -58,7 +59,7 @@ public class BoardPieceMatrix
 		{
 			for(int j=0; j < this.width; j++)
 			{
-				res += frmBoardPieces.toString();
+				res += frmBoardPieces[i][j].toString();
 			}
 			
 			res += "\n";

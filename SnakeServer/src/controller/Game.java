@@ -180,6 +180,7 @@ public class Game
 		Color color = getAvailableColor();
 		
 		snakeSharedDirections.put(snake, sharedDirection);
+		System.out.println("botei no map a entrada <" + snake + ", " + sharedDirection + ">");
 		snakeColors.put(snake, color);
 		snakes.add(snake);
 		fillSnakeOnBoard(snake);
@@ -192,6 +193,8 @@ public class Game
 	 */
 	public void moveSnakes()
 	{
+		System.out.println("I'm gonna move " + snakes.size() + " snakes");
+		
 		// shuffles the snake list to *try* to be fair with the players
 		Collections.shuffle(snakes);
 		
@@ -201,11 +204,13 @@ public class Game
 		while(snakeIterator.hasNext())
 		{
 			Snake snake = snakeIterator.next();
+			System.out.println("trying to move the snake " + snake.toString());
 			
 			// Current snake direction
 			EnumSnakeDirection oldDir = snake.getDirection();
 						
 			// Direction set by the user
+			System.out.println("snakeSharedDirections.get("+snake+") = " + snakeSharedDirections.get(snake));
 			EnumSnakeDirection newDir = snakeSharedDirections.get(snake).consume();
 			
 			// Valid direction changes
@@ -297,6 +302,6 @@ public class Game
 	
 	public void printBoardMatrix()
 	{
-		System.out.println(boardMatrix);
+		System.out.println(boardMatrix.toString());
 	}
  }

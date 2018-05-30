@@ -28,6 +28,32 @@ public class SocketServerSnake
 	
 	public void init()
 	{
+		Thread threadUpdate = new Thread(new Runnable() {
+			
+			@Override
+			public void run()
+			{
+				try
+				{
+					while(true)
+					{
+						Thread.sleep(2000);
+						update();
+						game.printBoardMatrix();
+					}
+					
+				}
+				
+				catch (InterruptedException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		threadUpdate.start();
+		
 		try
 		{
 			socket = new DatagramSocket(6666);
@@ -39,38 +65,11 @@ public class SocketServerSnake
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		Thread threadUpdate = new Thread(new Runnable() {
-			
-			@Override
-			public void run()
-			{
-				try
-				{
-					while(true)
-					{
-						update();
-						Thread.sleep(2000);
-					}
-					
-				}
-				
-				catch (InterruptedException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				game.printBoardMatrix();
-				
-			}
-		});
-		
-		threadUpdate.start();
 	}
 	
 	private void update()
 	{
+		System.out.println("updating snakes...");
 		killInactiveClients();
 		game.moveSnakes();
 	}
@@ -85,6 +84,7 @@ public class SocketServerSnake
 			
 			if(! clientInfo.isActive() )
 			{
+				System.out.println("killing an inactive client...");
 				game.killInactiveSnake(clientInfo.getSnake());
 				entryIterator.remove();
 			}

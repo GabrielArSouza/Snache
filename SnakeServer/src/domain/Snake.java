@@ -13,9 +13,11 @@ public class Snake
 	private SnakePiece head;
 	private List<SnakePiece> body;
 	private EnumSnakeDirection direction;
+	private long id;
 	
-	public Snake(int headRow, int headColumn, int bodySize, EnumSnakeDirection initialDirection)
+	public Snake(int headRow, int headColumn, int bodySize, EnumSnakeDirection initialDirection, long id)
 	{
+		this.id = id;
 		this.head = new SnakePiece(headRow, headColumn);
 		this.body = new ArrayList<SnakePiece>();
 		this.bodySize = bodySize;
@@ -65,6 +67,9 @@ public class Snake
 		for ( int i = body.size()-1; i >=1; i--)
 			body.get(i).copy(body.get(i-1)); 
 		
+		// Mover primeira posição do corpo
+		body.get(0).copy(head);
+		
 		head.copy(newHead);
 	}
 	
@@ -94,10 +99,20 @@ public class Snake
 	@Override
 	public int hashCode()
 	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((head == null) ? 0 : head.hashCode());
-		return result;
+		return Long.hashCode(id);
+	}
+	
+	public String toString()
+	{
+		String res = "";
+		res += "[" + head.getRow() +", " + head.getColumn() + "], ";
+		
+		for(SnakePiece p : body)
+		{
+			res += "[" + p.getRow() +", " + p.getColumn() + "], ";
+		}
+		
+		return res;
 	}
 
 	@Override
@@ -110,12 +125,7 @@ public class Snake
 		if(getClass() != obj.getClass())
 			return false;
 		Snake other = (Snake) obj;
-		if(head == null)
-		{
-			if(other.head != null)
-				return false;
-		} else if(!head.equals(other.head))
-			return false;
-		return true;
+		
+		return id == other.id;
 	}
 }
