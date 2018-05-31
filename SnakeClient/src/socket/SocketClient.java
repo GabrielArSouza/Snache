@@ -1,14 +1,19 @@
 package socket;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import controller.EnumSnakeDirection;
 import controller.GameConstants;
 import controller.SingletonSnakeDirectionChange;
+import presentation.FrmBoardPiece;
 
 /**
  * Makes the client-side communication between the player's game, that behaves
@@ -96,6 +101,60 @@ public class SocketClient
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Receive data from the server
+	 * @throws ClassNotFoundException 
+	 */
+	public void receiveFromServer () throws ClassNotFoundException
+	{
+		try 
+		{
+			// The data sent by server has a serialized object board matrix
+			// Estimated size: 3KB
+			byte[] dataBuffFromServer = new byte[3072];
+			
+			// continuously listens to new data on the socket
+			while (true )
+			{
+				// packet that will be sent by server
+				DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
+				socket.receive(packFromServer);
+				
+				// interpreting object
+				ByteArrayInputStream bis = new ByteArrayInputStream(packFromServer.getData());
+				ObjectInput in = null;
+				
+				try 
+				{
+					in = new ObjectInputStream(bis);
+					Object boardMatrixObject = in.readObject();
+				}
+				finally {
+					try {
+						if (in != null) {
+							in.close();
+					    }
+					} catch (IOException ex) {
+					    // ignore close exception
+					}
+				}
+				
+				
+			}
+		}
+		catch (SocketException e)
+		{
+			socket.close();
+			e.printStackTrace();
+		}
+
+		catch (IOException i)
+		{
+			socket.close();
+			i.printStackTrace();
 		}
 	}
 }

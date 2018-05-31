@@ -20,7 +20,7 @@ public class FrmBoardPiece extends JButton implements Serializable
 	private static final long serialVersionUID = 7706353659170141551L;
 
 	/** The static color of the piece. */
-	private Color backgroundColor;
+	private transient Color backgroundColor;
 
 	/**
 	 * Instantiates a new piece.

@@ -362,4 +362,13 @@ public class Game
 			return currentId;
 		}
 	}
+	
+	/**
+	 * Gets the board matrix game
+	 * @return the board matrix object
+	 */
+	public BoardPieceMatrix getBoardMatrix ()
+	{
+		return this.boardMatrix;
+	}	
 }

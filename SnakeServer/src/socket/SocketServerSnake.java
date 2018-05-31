@@ -1,6 +1,9 @@
 package socket;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -173,13 +176,17 @@ public class SocketServerSnake
 			catch (InterruptedException e)
 			{
 				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
 		/**
 		 * Updates the game board.
+		 * @throws IOException 
 		 */
-		private void update()
+		private void update() throws IOException
 		{
 			System.out.println("updating snakes...");
 			killInactiveClients();
@@ -187,12 +194,22 @@ public class SocketServerSnake
 			game.moveSnakes();
 			game.drawSnakes();
 
+			// builds the package to be sent to the users
+			byte[] dataToSend = this.serializeBoardMatrix();	
+			
 			// sets the "updateDirection" attribute of the players to false so that the next
 			// game iteration will consume the commands sent by the players
 			for(Map.Entry<InetAddress, ClientInfo> entry : clientInfos.entrySet())
 			{
 				entry.getValue().setDirectionUpdated(false);
-			}
+				
+				// wrap the data on board matrix
+				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
+						SocketConstants.STANDARD_PORT);
+				
+				// sends the packet to the client
+				socket.send(packToSend);
+			}		
 		}
 
 		/**
@@ -214,6 +231,37 @@ public class SocketServerSnake
 					entryIterator.remove();
 				}
 			}
+		}
+		
+		/**
+		 * Serializes the object board matrix 
+		 * @return a byte array containing a board matrix serialization
+		 * @throws IOException 
+		 * 
+		 * Based in:
+		 * https://stackoverflow.com/questions/2836646/java-serializable-object-to-byte-array
+		 */
+		private byte[] serializeBoardMatrix () throws IOException
+		{
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutput out = null;
+			byte[] boardMatrix;
+			
+			try {
+				out = new ObjectOutputStream(bos);   
+				out.writeObject(game.getBoardMatrix().getMatrix());
+				out.flush();
+				boardMatrix = bos.toByteArray();
+			} 
+			finally {
+				try {
+					bos.close();
+				} catch (IOException ex) {
+					// ignore close exception
+				}
+			}
+			System.out.println(boardMatrix.length);
+			return boardMatrix;
 		}
 	}
 }
