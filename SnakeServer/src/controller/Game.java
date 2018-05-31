@@ -20,18 +20,19 @@ import domain.SnakePiece;
 import presentation.BoardPieceMatrix;
 
 /**
- * The Class Game.
+ * Class that implements the game mechanics.
  *
  * @author gabriel
  */
 public class Game
 {
+	/** The ids of the active snakes on the board. */
 	private SortedSet<Long> currentIds;
 	
 	/** Reference to the board UI. */
 	private BoardPieceMatrix boardMatrix;
 	
-	/** Reference to the board logic. */
+	/** Reference to the board logic object. */
 	private Board board;
 	
 	/** Colors that can be used in new snakes. */
@@ -47,10 +48,10 @@ public class Game
 	private Map<Snake, SharedSnakeDirection> snakeSharedDirections;
 	
 	/**
-	 * Instantiates a new game.
+	 * Instantiates a new game object.
 	 *
-	 * @param frmBoard board UI
-	 * @param board board logic
+	 * @param boardMatrix the board UI
+	 * @param board the logic board
 	 */
 	public Game(BoardPieceMatrix boardMatrix, Board board)
 	{
@@ -257,6 +258,11 @@ public class Game
 		}
 	}
 	
+	/**
+	 * Kill a snake (before it moves) whose player is inactive.
+	 *
+	 * @param snake the snake
+	 */
 	public void killInactiveSnake(Snake snake)
 	{
 		board.freeBoardPiece(snake.getHead());
@@ -277,6 +283,7 @@ public class Game
 	 *
 	 * @param snake the snake
 	 * @param oldTail the old tail of the snake to be killed
+	 * @param headOnLimits the head on limits
 	 */
 	public void killMovedSnake(Snake snake, SnakePiece oldTail, boolean headOnLimits)
 	{
@@ -305,11 +312,19 @@ public class Game
 		}
 	}
 	
+	/**
+	 * Prints the board on the console.
+	 */
 	public void printBoardMatrix()
 	{
 		System.out.println(boardMatrix.toString());
 	}
 	
+	/**
+	 * Gets the least id available.
+	 *
+	 * @return the least id available to be assigned to a snake
+	 */
 	public Long nextAvailableId()
 	{
 		if(currentIds.isEmpty())
