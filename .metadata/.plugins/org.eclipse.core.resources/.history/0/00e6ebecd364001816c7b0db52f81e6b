@@ -1,0 +1,118 @@
+package socket;
+
+import controller.EnumSnakeDirection;
+import controller.SharedSnakeDirection;
+import domain.Snake;
+
+/**
+ * This class contains information about a single player connected to the game.
+ */
+public class ClientInfo
+{
+	/**
+	 * The max number of time steps that the player may not respond to the server.
+	 */
+	private final int MAX_ITERATIONS = 3;
+
+	/**
+	 * Number of chances that the player has to connect to the server. It receives
+	 * initially the value of MAX_ITERATIONS. If it becomes 0, the player is
+	 * disconnected by the server and its snake is killed.
+	 */
+	private int deadCont;
+
+	/**
+	 * The EnumSnakeDirection wrapper that will be used to move the player's snake.
+	 */
+	private SharedSnakeDirection sharedSnakeDirection;
+
+	/**
+	 * True if the game updated the direction of the player's snake based on the
+	 * command sent by the player, false otherwise. This flag is used to update the
+	 * player's snake only one time per time step, even if multiple commands were
+	 * sent to the server.
+	 */
+	private boolean directionUpdated;
+
+	/** The player's snake. */
+	private Snake snake;
+
+	/**
+	 * Instantiates a new object.
+	 *
+	 * @param sharedSnakeDirection
+	 *            the snake direction wrapper
+	 * @param snake
+	 *            the snake
+	 */
+	public ClientInfo(SharedSnakeDirection sharedSnakeDirection, Snake snake)
+	{
+		this.sharedSnakeDirection = sharedSnakeDirection;
+		deadCont = MAX_ITERATIONS;
+		directionUpdated = false;
+		this.snake = snake;
+	}
+
+	/**
+	 * Gets the player's snake.
+	 *
+	 * @return the player's snake
+	 */
+	public Snake getSnake()
+	{
+		return snake;
+	}
+
+	/**
+	 * Checks if the player is active. A player is considered active if his/her
+	 * deadCont isn't 0, i.e., the server shouldn't disconnect him/her.
+	 *
+	 * @return true, if is active
+	 */
+	public boolean isActive()
+	{
+		return deadCont != 0;
+	}
+
+	/**
+	 * Decrease dead cont.
+	 */
+	public void decreaseDeadCont()
+	{
+		--deadCont;
+	}
+
+	/**
+	 * Update direction.
+	 *
+	 * @param direction
+	 *            the direction
+	 */
+	public void updateDirection(String direction)
+	{
+		if(direction.equals(EnumSnakeDirection.SAME.toString()) || directionUpdated)
+		{
+			return;
+		}
+
+		else
+		{
+			System.out.println("updating snake direction to " + direction + "...");
+			directionUpdated = true;
+			sharedSnakeDirection.produce(direction);
+			deadCont = MAX_ITERATIONS;
+		}
+
+	}
+
+	/**
+	 * Sets the direction updated.
+	 *
+	 * @param directionUpdated
+	 *            the new direction updated
+	 */
+	public void setDirectionUpdated(boolean directionUpdated)
+	{
+		this.directionUpdated = directionUpdated;
+	}
+}

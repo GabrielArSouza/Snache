@@ -20,8 +20,8 @@ public class SocketClient
 {
 	/** Socket by which the communication will be made. */
 	private DatagramSocket socket;
-	
-	/** Singleton instance  whose snake direction changes will be caught of. */
+
+	/** Singleton instance whose snake direction changes will be caught of. */
 	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();
 
 	/**
@@ -43,8 +43,11 @@ public class SocketClient
 	}
 
 	/**
-	 * Sends data to the server.
-	 * Every "GAME_LATENCY" milliseconds it sends a snake direction change to the server.
+	 * Sends data to the server. Every "GAME_LATENCY" milliseconds it sends a snake
+	 * direction change to the server. It doesn't need to send a dummy package to
+	 * request connection, so the first package is also a snake direction. The
+	 * server is responsible for identifying that the player is, in practice,
+	 * requesting a connection.
 	 */
 	public void sendDataToServer()
 	{
@@ -60,13 +63,14 @@ public class SocketClient
 			{
 				// catches the direction change from the singleton
 				direction = snakeDirection.consume().toString();
-				
+
 				System.out.println("direction sent to server: " + direction);
 
 				// builds the package to be sent to the server
 				byte[] dataToSend = direction.getBytes();
-				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, ip, 6666);
-				
+				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, ip,
+						SocketConstants.STANDARD_PORT);
+
 				// sends the packet
 				socket.send(packToSend);
 

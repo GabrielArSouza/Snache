@@ -6,15 +6,14 @@ import presentation.BoardPieceMatrix;
 import socket.SocketServerSnake;
 
 /**
- * Driver class of the server-side component of the game.
+ * Driver class of the server-side component of the game. It contains the main method only.
  */
 public class Main 
 {
-	
 	/**
-	 * The main method.
+	 * Driver method of the applications.
 	 *
-	 * @param args the arguments
+	 * @param args the arguments passed in the game execution on terminal
 	 */
 	public static void main(String[] args)
 	{
@@ -22,6 +21,6 @@ public class Main
 		Board board = new Board(20, 20);
 		Game game = new Game(boardPieceMatrix, board);
 		SocketServerSnake socketServer = new SocketServerSnake(game);
-		socketServer.init();
+		socketServer.initSocket();
 	}
 }
