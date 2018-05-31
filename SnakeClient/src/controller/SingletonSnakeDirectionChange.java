@@ -59,6 +59,8 @@ public class SingletonSnakeDirectionChange
 	public void produce(EnumSnakeDirection newDirection)
 	{
 		if(direction == EnumSnakeDirection.SAME)
+		{
 			direction = newDirection;
+		}	
 	}
 }

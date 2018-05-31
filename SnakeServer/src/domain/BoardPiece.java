@@ -1,8 +1,7 @@
 package domain;
 
-// TODO: Auto-generated Javadoc
 /**
- * This class represents one logic component of the board.
+ * This class represents one component of the logic board.
  */
 public class BoardPiece
 {
@@ -91,20 +90,7 @@ public class BoardPiece
 	{
 		this.empty = empty;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + column;
-		result = prime * result + row;
-		return result;
-	}
-
+		
 	/* (non-Javadoc)
 	 * 
 	 * Two BoardPiece objects are equal when so are their rows and columns.

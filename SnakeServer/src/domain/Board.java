@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * The class Board represents the logic structure of the board used in the game.
  * Its components (BoardPiece objects) are either empty or nonempty.

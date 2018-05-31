@@ -23,7 +23,7 @@ public class SharedSnakeDirection
 
 	/**
 	 * Consumes the current direction. The direction is set to null when this method
-	 * is called.
+	 * is called. It doesn't consume the "SAME" direction change.
 	 *
 	 * @return the current snake direction
 	 */
@@ -31,9 +31,12 @@ public class SharedSnakeDirection
 	{
 		EnumSnakeDirection dir = direction;
 
-		if(direction != null)
+		if(direction != null && direction != EnumSnakeDirection.SAME)
+		{
+			System.out.println("consuming...");
 			direction = null;
-
+		}
+			
 		return dir;
 	}
 
@@ -50,29 +53,28 @@ public class SharedSnakeDirection
 	}
 
 	/**
-	 * Sets the current direction to a specific value if it is null..
+	 * Sets the current direction to a specific value if it is null.
 	 *
 	 * @param direction
 	 *            the EnumSnakeDirection object corresponding to the new direction
 	 */
 	public void produce(EnumSnakeDirection direction)
 	{
-		if(this.direction != null)
-			this.direction = direction;
-
-		else
+		System.out.println("trying to produce " + direction + " but I am " + this.direction);
+		
+		// it doesn't produce null or SAME directions
+		if(direction == null || direction == EnumSnakeDirection.SAME)
 		{
-			// ignore;
+			return;
 		}
-	}
-
-	/**
-	 * Checks for resource.
-	 *
-	 * @return true, if successful
-	 */
-	public boolean hasResource()
-	{
-		return direction != null;
+		
+		// it produces a direction only if there is not one already
+		if(this.direction != null && this.direction != EnumSnakeDirection.SAME)
+		{
+			return;
+		}
+		
+		this.direction = direction;
+		System.out.println("produced direction " + direction);
 	}
 }

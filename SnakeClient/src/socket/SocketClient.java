@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import controller.GameConstants;
 import controller.SingletonSnakeDirectionChange;
 
 /**
@@ -43,7 +44,7 @@ public class SocketClient
 
 	/**
 	 * Sends data to the server.
-	 * Every 2000 milliseconds it sends a snake direction change to the server.
+	 * Every "GAME_LATENCY" milliseconds it sends a snake direction change to the server.
 	 */
 	public void sendDataToServer()
 	{
@@ -51,6 +52,7 @@ public class SocketClient
 
 		try
 		{
+			// TODO change it to something other than the localhost
 			// ip address of the player
 			InetAddress ip = InetAddress.getByName("localhost");
 
@@ -68,8 +70,8 @@ public class SocketClient
 				// sends the packet
 				socket.send(packToSend);
 
-				// the next package is sent after 2000ms
-				Thread.sleep(2000);
+				// the next package is sent after GAME_LATENCY milliseconds
+				Thread.sleep(GameConstants.GAME_LATENCY);
 			}
 
 		}

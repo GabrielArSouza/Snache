@@ -56,7 +56,7 @@ public class FrmBoard extends JFrame
 	 * @param width
 	 *            width of the board
 	 * @param pieceSize
-	 *            size (in pixels) of each position in the board
+	 *            size (in pixels) of each little square in the board
 	 */
 	public FrmBoard(int height, int width, int pieceSize)
 	{

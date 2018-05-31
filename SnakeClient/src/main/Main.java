@@ -11,7 +11,7 @@ public class Main
 	/**
 	 * The main method of the program.
 	 *
-	 * @param args the arguments
+	 * @param args the arguments passed in the game execution on terminal
 	 */
 	public static void main(String[] args)
 	{

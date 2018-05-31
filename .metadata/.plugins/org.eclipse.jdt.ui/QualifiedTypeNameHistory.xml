@@ -20,12 +20,13 @@
 <fullyQualifiedTypeName name="socket.ClientThread"/>
 <fullyQualifiedTypeName name="socket.SocketClient"/>
 <fullyQualifiedTypeName name="socket.SocketServerSnake"/>
-<fullyQualifiedTypeName name="controller.EnumSnakeDirection"/>
 <fullyQualifiedTypeName name="presentation.FrmBoardPiece"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="controller.SharedSnakeDirection"/>
+<fullyQualifiedTypeName name="java.lang.Runnable"/>
+<fullyQualifiedTypeName name="controller.EnumSnakeDirection"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.net.InetAddress"/>
 <fullyQualifiedTypeName name="socket.ClientInfo"/>
-<fullyQualifiedTypeName name="controller.SharedSnakeDirection"/>
-<fullyQualifiedTypeName name="java.lang.Runnable"/>
+<fullyQualifiedTypeName name="controller.GameConstants"/>
 </qualifiedTypeNameHistroy>

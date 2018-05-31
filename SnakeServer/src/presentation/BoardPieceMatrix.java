@@ -2,12 +2,26 @@ package presentation;
 
 import java.awt.Color;
 
+/**
+ * Board UI that will be sent to the players by socket.
+ */
 public class BoardPieceMatrix
 {
+	/** The UI pieces of the board. */
 	private FrmBoardPiece frmBoardPieces[][];
+	
+	/** The width of the board. */
 	private int width;
+	
+	/** The height of the board. */
 	private int height;
 	
+	/**
+	 * Instantiates a new board UI.
+	 *
+	 * @param height the height
+	 * @param width the width
+	 */
 	public BoardPieceMatrix(int height, int width)
 	{
 		this.height = height;
@@ -16,6 +30,9 @@ public class BoardPieceMatrix
 		initPieces();
 	}
 
+	/**
+	 * Inits the pieces.
+	 */
 	private void initPieces()
 	{
 		frmBoardPieces = new FrmBoardPiece[height][width];
@@ -29,11 +46,21 @@ public class BoardPieceMatrix
 		}
 	}
 	
+	/**
+	 * Sets the color at.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @param color the color
+	 */
 	public void setColorAt(int x, int y, Color color)
 	{
 		frmBoardPieces[x][y].setColor(color);
 	}
 	
+	/**
+	 * Clear board.
+	 */
 	public void clearBoard()
 	{
 		for (int i=0; i < this.height; i++)
@@ -45,11 +72,19 @@ public class BoardPieceMatrix
 		}
 	}
 	
+	/**
+	 * Gets the matrix.
+	 *
+	 * @return the matrix
+	 */
 	public FrmBoardPiece[][] getMatrix()
 	{
 		return frmBoardPieces;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString()
 	{

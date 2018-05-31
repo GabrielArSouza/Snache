@@ -11,6 +11,7 @@ import java.util.Map;
 
 import controller.EnumSnakeDirection;
 import controller.Game;
+import controller.GameConstants;
 import controller.SharedSnakeDirection;
 import domain.Snake;
 
@@ -37,7 +38,7 @@ public class SocketServerSnake
 				{
 					while(true)
 					{
-						Thread.sleep(2000);
+						Thread.sleep(GameConstants.GAME_LATENCY);
 						update();
 						game.printBoardMatrix();
 					}
@@ -71,6 +72,12 @@ public class SocketServerSnake
 	{
 		System.out.println("updating snakes...");
 		killInactiveClients();
+		
+		for(Map.Entry<InetAddress, ClientInfo> entry : clientInfos.entrySet())
+		{
+			entry.getValue().setDirectionUpdated(false);
+		}
+			
 		game.moveSnakes();
 		game.drawSnakes();
 	}
@@ -97,7 +104,7 @@ public class SocketServerSnake
 		try 
 		{
 			// TODO change buff size
-			byte[] dataBuffFromClient = new byte[1024];
+			byte[] dataBuffFromClient = new byte[1];
 
 			while (true) 
 			{
