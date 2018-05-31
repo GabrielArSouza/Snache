@@ -1,0 +1,13 @@
+package domain;
+
+public class Piece
+{
+	private int row;
+	private int column;
+	
+	public Piece(int row, int column)
+	{
+		this.row = row;
+		this.column = column;
+	}
+}

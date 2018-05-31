@@ -1,0 +1,17 @@
+package controller;
+
+/**
+ * The Enum EnumSnakeDirection.
+ */
+public enum EnumSnakeDirection
+{
+	
+	/** The up. */
+	UP, 
+ /** The left. */
+ LEFT, 
+ /** The down. */
+ DOWN, 
+ /** The right. */
+ RIGHT;
+}

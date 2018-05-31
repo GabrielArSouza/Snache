@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.Stack;
+import java.util.TreeSet;
 
 import domain.Board;
 import domain.BoardPiece;
@@ -18,35 +20,40 @@ import domain.SnakePiece;
 import presentation.BoardPieceMatrix;
 
 /**
- * The Class Game.
+ * Class that implements the game mechanics.
  *
  * @author gabriel
  */
 public class Game
 {
+	/** The ids of the active snakes on the board. */
+	private SortedSet<Long> currentIds;
+
 	/** Reference to the board UI. */
 	private BoardPieceMatrix boardMatrix;
-	
-	/** Reference to the board logic. */
+
+	/** Reference to the board logic object. */
 	private Board board;
-	
+
 	/** Colors that can be used in new snakes. */
 	private Stack<Color> availableColors;
-	
+
 	/** Current snakes in the board. */
 	private List<Snake> snakes;
-	
+
 	/** Colors assigned to the current snakes. */
 	private Map<Snake, Color> snakeColors;
-	
+
 	/** Direction changers assigned to the current snakes. */
 	private Map<Snake, SharedSnakeDirection> snakeSharedDirections;
-	
+
 	/**
-	 * Instantiates a new game.
+	 * Instantiates a new game object.
 	 *
-	 * @param frmBoard board UI
-	 * @param board board logic
+	 * @param boardMatrix
+	 *            the board UI
+	 * @param board
+	 *            the logic board
 	 */
 	public Game(BoardPieceMatrix boardMatrix, Board board)
 	{
@@ -56,12 +63,13 @@ public class Game
 		this.snakeColors = new HashMap<Snake, Color>();
 		this.snakeSharedDirections = new HashMap<Snake, SharedSnakeDirection>();
 		this.availableColors = new Stack<Color>();
+		this.currentIds = new TreeSet<Long>();
 		resetAvailableColors();
 	}
-	
+
 	/**
-	 * Resets the stack of available colors.
-	 * It shuffles the array of all possible colors and put the colors on a stack.
+	 * Resets the stack of available colors. It shuffles the array of all possible
+	 * colors and put the colors on a stack.
 	 */
 	private void resetAvailableColors()
 	{
@@ -69,7 +77,7 @@ public class Game
 		Collections.shuffle(allColors);
 		availableColors.addAll(allColors);
 	}
-	
+
 	/**
 	 * Gets an available color from the stack of colors.
 	 *
@@ -78,230 +86,280 @@ public class Game
 	private Color getAvailableColor()
 	{
 		Color color = availableColors.pop();
-		
+
 		if(availableColors.empty())
 			resetAvailableColors();
-		
+
 		return color;
 	}
-	
+
 	/**
-	 * Draw snakes.
-	 * It clears the board first and then paint all the current snakes.
+	 * Draw snakes. It clears the board first and then paint all the current snakes.
 	 */
 	public void drawSnakes()
 	{
 		boardMatrix.clearBoard();
-		
+
 		for(Snake snake : snakes)
 		{
 			SnakePiece head = snake.getHead();
 			Color color = snakeColors.get(snake);
-			
+
 			boardMatrix.setColorAt(head.getRow(), head.getColumn(), color);
-			
+
 			for(SnakePiece piece : snake.getBody())
 			{
 				boardMatrix.setColorAt(piece.getRow(), piece.getColumn(), color);
 			}
 		}
 	}
-	
+
 	/**
-	 * Creates a snake.
+	 * Creates a new snake.
 	 *
-	 * @param sharedDirection direction changer associated to the new snake
-	 * @return true, if the snake was successfully created
-	 * 		   false, otherwise
+	 * @param sharedDirection
+	 *            direction changer associated to the new snake
+	 * @return the snake created, or null if the creation wasn't possible 
 	 */
 	public Snake createSnake(SharedSnakeDirection sharedDirection)
 	{
 		EnumSnakeDirection direction = null;
 		SnakePiece headPiece = null;
-		
+
 		// try to find a free vertical space
-		BoardPiece columnTopEdge = board.getAvailableColumn(SnakeConstants.STANDARD_BODY_SIZE+1);
-		
+		BoardPiece columnTopEdge = board.getAvailableColumn(SnakeConstants.STANDARD_BODY_SIZE + 1);
+
 		// there's available space for a vertical snake
 		if(columnTopEdge != null)
 		{
 			// space in the lower part of the board:
-			// the snake is moving upwards (so that it is further from touching the board edges), and the head is the upmost piece)
-			if(columnTopEdge.getRow() >= board.getHeight()/2)
+			// the snake is moving upwards (so that it is further from touching the board
+			// edges), and the head is the topmost piece)
+			if(columnTopEdge.getRow() >= board.getHeight() / 2)
 			{
 				headPiece = new SnakePiece(columnTopEdge);
 				direction = EnumSnakeDirection.UP;
 			}
-			
+
 			// space in the upper part of the board:
-			// the snake is moving downwards (so that it is further from touching the board edges), and the head is the downmost piece)
+			// the snake is moving downwards (so that it is further from touching the board
+			// edges), and the head is the bottom-most piece)
 			else
 			{
-				headPiece = new SnakePiece(columnTopEdge.getRow() + SnakeConstants.STANDARD_BODY_SIZE, columnTopEdge.getColumn());
+				headPiece = new SnakePiece(columnTopEdge.getRow() + SnakeConstants.STANDARD_BODY_SIZE,
+						columnTopEdge.getColumn());
 				direction = EnumSnakeDirection.DOWN;
 			}
 		}
-		
+
 		// no available vertical space
-		else 
+		else
 		{
 			// try to find free horizontal space
-			BoardPiece rowLeftmostPiece = board.getAvailableRow(SnakeConstants.STANDARD_BODY_SIZE+1);
-			
+			BoardPiece rowLeftmostPiece = board.getAvailableRow(SnakeConstants.STANDARD_BODY_SIZE + 1);
+
 			// there's available space for a horizontal snake
 			if(rowLeftmostPiece != null)
 			{
 				// space in the right half of the board:
-				// the snake is moving leftwards (so that it is further from touching the board edges), and the head is the leftmost piece)
-				if(rowLeftmostPiece.getRow() >= board.getHeight()/2)
+				// the snake is moving leftwards (so that it is further from touching the board
+				// edges), and the head is the leftmost piece)
+				if(rowLeftmostPiece.getRow() >= board.getHeight() / 2)
 				{
 					headPiece = new SnakePiece(rowLeftmostPiece);
 					direction = EnumSnakeDirection.LEFT;
 				}
-				
+
 				// space in the left half of the board:
-				// the snake is moving rightwards (so that it is further from touching the board edges), and the head is the rightmost piece)
+				// the snake is moving rightwards (so that it is further from touching the board
+				// edges), and the head is the rightmost piece)
 				else
 				{
-					headPiece = new SnakePiece(rowLeftmostPiece.getRow(), rowLeftmostPiece.getColumn() + SnakeConstants.STANDARD_BODY_SIZE);
+					headPiece = new SnakePiece(rowLeftmostPiece.getRow(),
+							rowLeftmostPiece.getColumn() + SnakeConstants.STANDARD_BODY_SIZE);
 					direction = EnumSnakeDirection.RIGHT;
 				}
 			}
 		}
-		
+
 		if(headPiece == null)
 		{
 			return null;
 		}
-		
+
 		System.out.println("snake created: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
-		
-		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction);
+
+		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction,
+				nextAvailableId());
 		Color color = getAvailableColor();
-		
+
 		snakeSharedDirections.put(snake, sharedDirection);
-		System.out.println("botei no map a entrada <" + snake + ", " + sharedDirection + ">");
 		snakeColors.put(snake, color);
 		snakes.add(snake);
 		fillSnakeOnBoard(snake);
-		
+
 		return snake;
 	}
 
 	/**
-	 * Moves all the snakes.
+	 * Moves all the snakes on the board.
 	 */
 	public void moveSnakes()
 	{
-		System.out.println("I'm gonna move " + snakes.size() + " snakes");
-		
 		// shuffles the snake list to *try* to be fair with the players
 		Collections.shuffle(snakes);
-		
+
 		// using iterator so that we can delete snakes while iterating the snake list
 		ListIterator<Snake> snakeIterator = snakes.listIterator();
-		
+
 		while(snakeIterator.hasNext())
 		{
 			Snake snake = snakeIterator.next();
-			System.out.println("trying to move the snake " + snake.toString());
-			
+
 			// Current snake direction
 			EnumSnakeDirection oldDir = snake.getDirection();
-						
+
 			// Direction set by the user
-			System.out.println("snakeSharedDirections.get("+snake+") = " + snakeSharedDirections.get(snake));
+			System.out.println("snakeSharedDirections.get(" + snake + ") = " + snakeSharedDirections.get(snake));
 			EnumSnakeDirection newDir = snakeSharedDirections.get(snake).consume();
-			
+
 			// Valid direction changes
-			if( (newDir == EnumSnakeDirection.UP && oldDir != EnumSnakeDirection.DOWN) ||
-				(newDir == EnumSnakeDirection.DOWN && oldDir != EnumSnakeDirection.UP) ||
-				(newDir == EnumSnakeDirection.RIGHT && oldDir != EnumSnakeDirection.LEFT) ||
-				(newDir == EnumSnakeDirection.LEFT && oldDir != EnumSnakeDirection.RIGHT))
+			if((newDir == EnumSnakeDirection.UP && (oldDir == EnumSnakeDirection.LEFT || oldDir == EnumSnakeDirection.RIGHT))
+					|| (newDir == EnumSnakeDirection.DOWN && (oldDir == EnumSnakeDirection.LEFT || oldDir == EnumSnakeDirection.RIGHT))
+					|| (newDir == EnumSnakeDirection.LEFT && (oldDir == EnumSnakeDirection.UP || oldDir == EnumSnakeDirection.DOWN))
+					|| (newDir == EnumSnakeDirection.RIGHT && (oldDir == EnumSnakeDirection.UP || oldDir == EnumSnakeDirection.DOWN)))
 			{
 				snake.setDirection(newDir);
 			}
-			
-			SnakePiece oldTail	= snake.getTail();
-			
+
+			else
+			{
+				System.out.println("INVALID DIRECTION CHANGE! old = " + oldDir + ", new = " + newDir);
+			}
+
+			// old tail position set to empty now
+			board.freeBoardPiece(snake.getTail());
+
 			snake.move();
-			
+
 			SnakePiece newHead = snake.getHead();
 			boolean newHeadOnLimits = false;
-			
-			// the new head respects the board edges
-			if(newHead.getRow() >= 0 && newHead.getRow() < board.getHeight() &&
-			   newHead.getColumn() >= 0 && newHead.getColumn() < board.getWidth())
+
+			// verify if the new head respects the board edges
+			if(newHead.getRow() >= 0 && newHead.getRow() < board.getHeight() && newHead.getColumn() >= 0
+					&& newHead.getColumn() < board.getWidth())
 			{
 				newHeadOnLimits = true;
 			}
-			
-			// the cell to which the snake is moving is empty
-			if(board.getBoardPiece(newHead.getRow(), newHead.getColumn()).isEmpty())
+
+			// the cell to which the snake is moving is empty and the head respect the board
+			// edges
+			if(newHeadOnLimits && board.getBoardPiece(newHead.getRow(), newHead.getColumn()).isEmpty())
 			{
 				board.occupyBoardPiece(newHead);
-				board.freeBoardPiece(oldTail);
 			}
-			
-			// the cell isn't empty (either is a board edge or another snake): the snake dies!
+
+			// the cell isn't empty or the new head doesn't respect the board edges: the
+			// snake dies!
 			else
 			{
-				killMovedSnake(snake, oldTail, newHeadOnLimits);
+				killMovedSnake(snake);
 				snakeIterator.remove();
 			}
 		}
 	}
-	
+
+	/**
+	 * Kill a snake (before it moves) whose player is inactive.
+	 *
+	 * @param snake
+	 *            the snake
+	 */
 	public void killInactiveSnake(Snake snake)
 	{
 		board.freeBoardPiece(snake.getHead());
-		
+
 		for(SnakePiece bodyPiece : snake.getBody())
 			board.freeBoardPiece(bodyPiece);
-		
+
 		snakeColors.remove(snake);
 		snakeSharedDirections.remove(snake);
-		
+
 		snakes.remove(snake);
 	}
-	
+
 	/**
-	 * Kills a snake that has moved already.
-	 * Frees the space previously occupied by the snake, and remove
-	 * references to that snake on the map attributes.
+	 * Kills a snake that has moved already. Frees the space previously occupied by
+	 * the snake, and remove references to that snake on the map attributes.
 	 *
-	 * @param snake the snake
-	 * @param oldTail the old tail of the snake to be killed
+	 * @param snake            the snake to be killed
 	 */
-	public void killMovedSnake(Snake snake, SnakePiece oldTail, boolean headOnLimits)
+	public void killMovedSnake(Snake snake)
 	{
-		if(headOnLimits)
-			board.freeBoardPiece(oldTail);
-		
+		// The position of the new head in the board wasn't set to nonempty, so it
+		// doesn't need to be freed. The position of the old head is the first position
+		// of the bodyPiece list because the snake moved, so it is freed in this loop.
 		for(SnakePiece bodyPiece : snake.getBody())
 			board.freeBoardPiece(bodyPiece);
-		
+
 		snakeColors.remove(snake);
 		snakeSharedDirections.remove(snake);
 	}
-	
+
 	/**
 	 * Makes a snake occupy some positions on the board.
 	 *
-	 * @param snake the snake
+	 * @param snake
+	 *            the snake
 	 */
 	public void fillSnakeOnBoard(Snake snake)
 	{
 		board.occupyBoardPiece(snake.getHead());
-		
+
 		for(SnakePiece bodyPiece : snake.getBody())
 		{
 			board.occupyBoardPiece(bodyPiece);
 		}
 	}
-	
+
+	/**
+	 * Prints the board on the console.
+	 */
 	public void printBoardMatrix()
 	{
-		System.out.println(boardMatrix.toString());
+		System.out.println(boardMatrix);
 	}
- }
+
+	/**
+	 * Gets the least id available.
+	 *
+	 * @return the least id available to be assigned to a snake
+	 */
+	public Long nextAvailableId()
+	{
+		if(currentIds.isEmpty())
+		{
+			return 0l;
+		}
+
+		else
+		{
+			Long currentId = 0l;
+
+			for(Long id : currentIds)
+			{
+				if(id == currentId)
+				{
+					++currentId;
+				}
+
+				else
+				{
+					return currentId;
+				}
+			}
+
+			return currentId;
+		}
+	}
+}

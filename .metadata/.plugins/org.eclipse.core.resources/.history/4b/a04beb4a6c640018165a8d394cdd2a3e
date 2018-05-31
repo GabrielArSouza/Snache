@@ -1,0 +1,187 @@
+package domain;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The class Board represents the logic structure of the board used in the game.
+ */
+public class Board
+{
+	
+	/** The width. */
+	private int width;
+	
+	/** The height. */
+	private int height;
+	
+	/** The board pieces. */
+	private BoardPiece boardPieces[][];
+	
+	/**
+	 * Instantiates a new board.
+	 *
+	 * @param width the width
+	 * @param height the height
+	 */
+	public Board(int width, int height)
+	{
+		this.width = width;
+		this.height = height;
+		boardPieces = new BoardPiece[width][height];
+		
+		for(int i = 0; i < width; ++i)
+		{
+			for(int j = 0; j < height; ++j)
+			{
+				boardPieces[i][j] = new BoardPiece(i, j);
+			}
+		}
+	}
+	
+	/**
+	 * Gets the width.
+	 *
+	 * @return the width
+	 */
+	public int getWidth()
+	{
+		return width;
+	}
+	
+	/**
+	 * Gets the height.
+	 *
+	 * @return the height
+	 */
+	public int getHeight()
+	{
+		return height;
+	}
+	
+	/**
+	 * Gets the available column.
+	 *
+	 * @param size the size
+	 * @return the available column
+	 */
+	public BoardPiece getAvailableColumn(int size)
+	{
+		if(size >= height) return null;
+		
+		// random permutation of the column indexes
+		List<Integer> columnIndexes = new ArrayList<Integer>();
+		for(int j = 0; j < width; ++j) columnIndexes.add(j);
+		Collections.shuffle(columnIndexes);
+		
+		int currAvailableSize = 0;
+		int currentColumn;
+		
+		for(int i = 0; i < width; ++i)
+		{
+			currentColumn = columnIndexes.get(i);
+			
+			for(int row = 0; row < height; ++row)
+			{
+				if(!boardPieces[row][currentColumn].isEmpty())
+				{
+					currAvailableSize = 0;
+				}
+				
+				else
+				{
+					// a space with enough length was found:  return the upmost position of it
+					if(++currAvailableSize > size)
+					{
+						return new BoardPiece(row - size , currentColumn);
+					}
+				}
+			}
+			
+		}
+		
+		currAvailableSize = 0;
+	
+		return null;
+	}
+	
+	/**
+	 * Gets the available row.
+	 *
+	 * @param size the size
+	 * @return the available row
+	 */
+	public BoardPiece getAvailableRow(int size)
+	{
+		if(size >= width) return null;
+		
+		// random permutation of the column indexes
+		List<Integer> rowIndexes = new ArrayList<Integer>();
+		for(int j = 0; j < height; ++j) rowIndexes.add(j);
+		Collections.shuffle(rowIndexes);
+		
+		int currAvailableSize = 0;
+		int currentRow;
+		
+		for(int i = 0; i < height; ++i)
+		{
+			currentRow = rowIndexes.get(i);
+			
+			for(int column = 0; column < width; ++column)
+			{
+				if(!boardPieces[currentRow][column].isEmpty())
+				{
+					currAvailableSize = 0;
+				}
+				
+				else
+				{
+					// a space with enough length was found: return the leftmost position of it
+					if(++currAvailableSize > size)
+					{
+						return new BoardPiece(currentRow, column-size);
+					}
+				}
+			}
+			
+		}
+		
+		currAvailableSize = 0;
+	
+		return null;
+	}
+	
+	/**
+	 * Gets the board piece.
+	 *
+	 * @param row the row
+	 * @param column the column
+	 * @return the board piece
+	 */
+	public BoardPiece getBoardPiece(int row, int column)
+	{
+		return boardPieces[row][column];
+	}
+	
+	/**
+	 * Occupy board piece.
+	 *
+	 * @param p the p
+	 */
+	public void occupyBoardPiece(BoardPiece p)
+	{
+		boardPieces[p.getRow()][p.getColumn()].setEmpty(false);
+	}
+	
+	/**
+	 * Free board piece.
+	 *
+	 * @param p the p
+	 */
+	public void freeBoardPiece(BoardPiece p)
+	{
+		boardPieces[p.getRow()][p.getColumn()].setEmpty(true);
+	}
+}

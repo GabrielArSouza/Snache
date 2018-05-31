@@ -1,0 +1,24 @@
+package socket;
+
+import controller.SharedSnakeDirection;
+
+public class ClientInfo
+{
+	private int deadCont;
+	
+	public ClientInfo(SharedSnakeDirection sharedSnakeDirection)
+	{
+		this.sharedSnakeDirection = sharedSnakeDirection;
+		deadCont = 3;
+	}
+	
+	public int getDeadCont()
+	{
+		return deadCont;
+	}
+	
+	public void decreaseDeadCont()
+	{
+		--deadCont;
+	}
+}

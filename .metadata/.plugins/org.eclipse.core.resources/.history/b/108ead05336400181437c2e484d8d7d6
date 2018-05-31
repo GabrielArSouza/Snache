@@ -1,0 +1,86 @@
+package socket;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import controller.SingletonSnakeDirectionChange;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SocketClient.
+ */
+public class SocketClient
+{
+	
+	/** The socket. */
+	private DatagramSocket socket;
+	
+	/** The snake direction. */
+	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();
+
+	/**
+	 * Inits the socket.
+	 */
+	public void initSocket()
+	{
+		try
+		{
+			socket = new DatagramSocket();
+			sendDataToServer();
+		}
+
+		catch (SocketException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Send data to server.
+	 */
+	public void sendDataToServer()
+	{
+		String direction;
+
+		try
+		{
+			InetAddress ip = InetAddress.getByName("localhost");
+
+			while(true)
+			{
+				direction = snakeDirection.consume().toString();
+				System.out.println("direction sent to server: " + direction);
+
+				byte[] dataToSend = direction.getBytes();
+				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, ip, 6666);
+				socket.send(packToSend);
+
+				Thread.sleep(2000);
+			}
+
+		}
+
+		catch (UnknownHostException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

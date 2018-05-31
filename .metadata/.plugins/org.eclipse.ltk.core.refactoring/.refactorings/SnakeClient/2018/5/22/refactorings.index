@@ -1,0 +1,10 @@
+1527465929978	Delete element
+1527466308887	Rename type 'SharedSnakeDirection'
+1527508928644	Delete element
+1527511182852	Delete element
+1527646445195	Rename enum constant 'DONT_MOVE'
+1527647111263	Rename method 'sendToServer'
+1527647239444	Rename type 'SingletonSnakeDirection'
+1527676223294	Rename local variable 'x'
+1527676229687	Rename local variable 'y'
+1527676701793	Rename method 'init'

@@ -1,26 +1,26 @@
 package domain;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class BoardPiece.
+ * This class represents one component of the logic board.
  */
 public class BoardPiece
 {
-	
-	/** The row. */
+	/** The row of the piece in the board. */
 	private int row;
-	
-	/** The column. */
+
+	/** The column of the piece in the board. */
 	private int column;
-	
-	/** The empty. */
+
+	/** false if there's a snake in this piece, false otherwise. */
 	private boolean empty;
-	
+
 	/**
-	 * Instantiates a new board piece.
+	 * Instantiates a new piece.
 	 *
-	 * @param row the row
-	 * @param column the column
+	 * @param row
+	 *            the row of the board
+	 * @param column
+	 *            the column of the board
 	 */
 	public BoardPiece(int row, int column)
 	{
@@ -28,31 +28,31 @@ public class BoardPiece
 		this.column = column;
 		this.empty = true;
 	}
-	
+
 	/**
-	 * Checks if is empty.
+	 * Checks if the piece is empty (i.e., if there isn't any snake in it).
 	 *
-	 * @return true, if is empty
+	 * @return true if the piece is empty, false otherwise
 	 */
 	public boolean isEmpty()
 	{
 		return empty;
 	}
-	
+
 	/**
-	 * Gets the row.
+	 * Gets the row of the piece in the board.
 	 *
-	 * @return the row
+	 * @return the row in the board
 	 */
 	public int getRow()
 	{
 		return row;
 	}
-	
+
 	/**
-	 * Gets the column.
+	 * Gets the column of the piece in the board.
 	 *
-	 * @return the column
+	 * @return the column in the board
 	 */
 	public int getColumn()
 	{
@@ -60,9 +60,10 @@ public class BoardPiece
 	}
 
 	/**
-	 * Sets the row.
+	 * Sets the row of the piece.
 	 *
-	 * @param row the new row
+	 * @param row
+	 *            the new row of the piece
 	 */
 	public void setRow(int row)
 	{
@@ -70,30 +71,31 @@ public class BoardPiece
 	}
 
 	/**
-	 * Sets the column.
+	 * Sets the column of the piece.
 	 *
-	 * @param column the new column
+	 * @param column
+	 *            the new column of the piece
 	 */
 	public void setColumn(int column)
 	{
 		this.column = column;
 	}
-	
+
+	/**
+	 * Sets the piece to either empty or nonempty.
+	 *
+	 * @param empty true to set to empty, false to set to nonempty
+	 */
 	public void setEmpty(boolean empty)
 	{
 		this.empty = empty;
 	}
-
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + column;
-		result = prime * result + row;
-		return result;
-	}
-
+		
+	/* (non-Javadoc)
+	 * 
+	 * Two BoardPiece objects are equal when so are their rows and columns.
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj)
 	{
