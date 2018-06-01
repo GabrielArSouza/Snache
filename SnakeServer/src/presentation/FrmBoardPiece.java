@@ -84,4 +84,9 @@ public class FrmBoardPiece extends JButton implements Serializable
 			return "@";
 		}
 	}
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+	
 }

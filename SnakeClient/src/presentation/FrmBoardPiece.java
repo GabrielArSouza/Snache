@@ -43,6 +43,11 @@ public class FrmBoardPiece extends JButton
 	{
 		this.backgroundColor = background;
 	}
+	
+	public Color getColor ()
+	{
+		return this.backgroundColor;
+	}
 
 	/*
 	 * (non-Javadoc)

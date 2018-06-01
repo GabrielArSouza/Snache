@@ -133,4 +133,14 @@ public class FrmBoard extends JFrame
 			}
 		}
 	}
+
+	public FrmBoardPiece[][] getFrmBoardPieces() {
+		return frmBoardPieces;
+	}
+
+	public void setFrmBoardPieces(FrmBoardPiece[][] frmBoardPieces) {
+		this.frmBoardPieces = frmBoardPieces;
+	}
+	
+	
 }

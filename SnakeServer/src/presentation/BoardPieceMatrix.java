@@ -116,4 +116,26 @@ public class BoardPieceMatrix implements Serializable
 
 		return res;
 	}
+
+	/**
+	 * Getters and Setters Methods
+	 */
+	
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	
+	
 }

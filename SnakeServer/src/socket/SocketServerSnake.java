@@ -17,6 +17,8 @@ import controller.Game;
 import controller.GameConstants;
 import controller.SharedSnakeDirection;
 import domain.Snake;
+import presentation.BoardPieceMatrix;
+import presentation.FrmBoardPiece;
 
 /**
  * This class implements the server-side of the socket communication between the
@@ -57,6 +59,9 @@ public class SocketServerSnake
 		Thread boardUpdater = new BoardUpdater();
 		boardUpdater.start();
 
+		Thread updateGameToClients = new UpdateGameToClients();
+		updateGameToClients.start();
+		
 		try
 		{
 			socket = new DatagramSocket(SocketConstants.STANDARD_PORT);
@@ -125,6 +130,7 @@ public class SocketServerSnake
 				}
 
 			}
+			
 		}
 
 		catch (SocketException e)
@@ -192,23 +198,13 @@ public class SocketServerSnake
 			killInactiveClients();
 
 			game.moveSnakes();
-			game.drawSnakes();
-
-			// builds the package to be sent to the users
-			byte[] dataToSend = this.serializeBoardMatrix();	
+			game.drawSnakes();	
 			
 			// sets the "updateDirection" attribute of the players to false so that the next
 			// game iteration will consume the commands sent by the players
 			for(Map.Entry<InetAddress, ClientInfo> entry : clientInfos.entrySet())
 			{
 				entry.getValue().setDirectionUpdated(false);
-				
-				// wrap the data on board matrix
-				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
-						SocketConstants.STANDARD_PORT);
-				
-				// sends the packet to the client
-				socket.send(packToSend);
 			}		
 		}
 
@@ -232,6 +228,84 @@ public class SocketServerSnake
 				}
 			}
 		}
+	}
+	
+	class UpdateGameToClients extends Thread
+	{
+	
+		@Override
+		public void run()
+		{
+			try
+			{
+				while(true)
+				{
+					// the updates occur every GAME_LATENCY milliseconds
+					Thread.sleep(GameConstants.GAME_LATENCY);
+
+					update();
+				}
+
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		private void update () throws IOException
+		{
+			for(Map.Entry<InetAddress, ClientInfo> entry : clientInfos.entrySet())
+			{
+				// builds the package to be sent to the user
+				byte[] dataToSend = this.codifyMessage();
+				
+				// wrap the data on board matrix
+				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
+						SocketConstants.STANDARD_PORT);
+				
+				System.out.println("Eviando um pacote com " + dataToSend.length
+						+ " bytes de dados para o cliente " + entry.getKey());
+				// sends the packet to the client
+				socket.send(packToSend);
+			}		
+		}
+		
+		private byte[] codifyMessage () throws IOException
+		{
+			// original data board
+			BoardPieceMatrix boardGame = game.getBoardMatrix();
+			
+			// board matrix game
+			FrmBoardPiece boardMessage[][] = boardGame.getMatrix();
+			
+			// message to sent to the user
+			PieceCodMessage boardCodefy[][] = 
+					new PieceCodMessage[boardGame.getHeight()][boardGame.getWidth()];
+			
+			/**
+			 * If color is a background color, so assigned code 00 in message
+			 * If color is a user snake, so assigned code 01 in message
+			 * If color is other snake, so assigned code 10 in message
+			 */
+			
+			for (int i=0; i < boardGame.getHeight(); i++)
+			{
+				for (int j=0; j < boardGame.getWidth(); j++)
+				{
+					// backgroud color
+					if ( boardMessage[i][j].getBackgroundColor() == GameConstants.BACK_COLOR )
+						boardCodefy[i][j] = new PieceCodMessage(false, false);
+					// snake user color
+					else boardCodefy[i][j] = new PieceCodMessage(false, true);
+				}
+			}
+		
+			return this.serializeBoardMatrix(boardCodefy);
+		}
 		
 		/**
 		 * Serializes the object board matrix 
@@ -241,7 +315,7 @@ public class SocketServerSnake
 		 * Based in:
 		 * https://stackoverflow.com/questions/2836646/java-serializable-object-to-byte-array
 		 */
-		private byte[] serializeBoardMatrix () throws IOException
+		private byte[] serializeBoardMatrix (PieceCodMessage boardCodefy[][]) throws IOException
 		{
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutput out = null;
@@ -249,7 +323,7 @@ public class SocketServerSnake
 			
 			try {
 				out = new ObjectOutputStream(bos);   
-				out.writeObject(game.getBoardMatrix().getMatrix());
+				out.writeObject(boardCodefy);
 				out.flush();
 				boardMatrix = bos.toByteArray();
 			} 
@@ -260,7 +334,6 @@ public class SocketServerSnake
 					// ignore close exception
 				}
 			}
-			System.out.println(boardMatrix.length);
 			return boardMatrix;
 		}
 	}
