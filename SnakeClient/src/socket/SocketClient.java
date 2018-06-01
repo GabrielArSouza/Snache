@@ -49,8 +49,8 @@ public class SocketClient
 		/**
 		 * Create Thread for update client direction 
 		 */
-		Thread  gameUpdate = new GameUpdate();
-		gameUpdate.start();
+//		Thread  gameUpdate = new GameUpdate();
+//		gameUpdate.start();
 		
 		try
 		{
@@ -88,7 +88,7 @@ public class SocketClient
 				// catches the direction change from the singleton
 				direction = snakeDirection.consume().toString();
 
-				//System.out.println("direction sent to server: " + direction);
+				System.out.println("direction sent to server: " + direction);
 
 				// builds the package to be sent to the server
 				byte[] dataToSend = direction.getBytes();
@@ -100,6 +100,7 @@ public class SocketClient
 				
 				// the next package is sent after GAME_LATENCY milliseconds
 				Thread.sleep(GameConstants.GAME_LATENCY);
+				this.receiveFromServer();
 				
 			}
 
@@ -124,6 +125,81 @@ public class SocketClient
 		}
 	}
 	
+	private void receiveFromServer () throws ClassNotFoundException
+	{
+		System.out.println("Recebeu dados do server");
+		
+		try 
+		{
+			// The data sent by server has a serialized object board matrix
+			// Estimated size: 100 bytes
+			byte[] dataBuffFromServer = new byte[100];
+			
+			// packet that will be sent by server
+			DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
+			socket.receive(packFromServer);
+			
+			System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
+			
+			this.decodeMessage(packFromServer.getData());
+		
+		}
+		catch (SocketException e)
+		{
+			socket.close();
+			e.printStackTrace();
+		}
+
+		catch (IOException i)
+		{
+			socket.close();
+			i.printStackTrace();
+		}
+	}
+	
+	private void decodeMessage ( byte[] message )
+	{
+		/**
+		 * If color is a background color, so assigned code 00 in message
+		 * If color is a user snake, so assigned code 01 in message
+		 * If color is other snake, so assigned code 10 in message
+		 */	
+	
+		System.out.println("Decodificando...");
+		int contLine = 0;
+		int contCol = 0;
+		
+		for (int i=0; i < message.length; i++)
+		{
+			int value = message[i];
+			String binaryValue = Integer.toBinaryString(value);
+			
+			char[] bits = binaryValue.toCharArray();
+			for (int j=0; j < 8; j+=2)
+			{
+				char bit1 = bits[j];
+				char bit2 = bits[j+1];
+			
+				if ( bit1 == '0' && bit2=='0')
+					boardClient[contLine][contCol].setBackground(Color.WHITE);
+				else if (bit1 == '0' && bit2 == '1')
+					boardClient[contLine][contCol].setBackground(Color.GREEN);
+				else 
+					boardClient[contLine][contCol].setBackground(Color.BLACK);
+			
+				contCol++;
+				
+				if (contCol > (widthBoard-1) )
+				{
+					contLine++;
+					contCol = 0;
+				}
+			}
+			
+		}
+		
+	}
+	
 	class GameUpdate extends Thread
 	{
 		@Override
@@ -135,6 +211,7 @@ public class SocketClient
 					// the updates occur every GAME_LATENCY milliseconds
 					Thread.sleep(GameConstants.GAME_LATENCY);
 					receiveFromServer();
+					System.out.println("updating...");
 				}
 
 			}
@@ -166,7 +243,8 @@ public class SocketClient
 				// packet that will be sent by server
 				DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
 				socket.receive(packFromServer);
-					
+				
+				System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
 				// interpreting object
 				ByteArrayInputStream bis = new ByteArrayInputStream(packFromServer.getData());
 				ObjectInput in = null;

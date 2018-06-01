@@ -59,8 +59,8 @@ public class SocketServerSnake
 		Thread boardUpdater = new BoardUpdater();
 		boardUpdater.start();
 
-		Thread updateGameToClients = new UpdateGameToClients();
-		updateGameToClients.start();
+//		Thread updateGameToClients = new UpdateGameToClients();
+//		updateGameToClients.start();
 		
 		try
 		{
@@ -205,6 +205,18 @@ public class SocketServerSnake
 			for(Map.Entry<InetAddress, ClientInfo> entry : clientInfos.entrySet())
 			{
 				entry.getValue().setDirectionUpdated(false);
+				
+				// builds the package to be sent to the user
+				byte[] dataToSend = this.codifyMessage();
+				
+				// wrap the data on board matrix
+				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
+						SocketConstants.STANDARD_PORT);
+				
+				System.out.println("Eviando um pacote com " + dataToSend.length
+						+ " bytes de dados para o cliente " + entry.getKey());
+				// sends the packet to the client
+				socket.send(packToSend);
 			}		
 		}
 
@@ -228,6 +240,86 @@ public class SocketServerSnake
 				}
 			}
 		}
+		private byte[] codifyMessage () throws IOException
+		{
+			// original data board
+			BoardPieceMatrix boardGame = game.getBoardMatrix();
+			
+			// board matrix game
+			FrmBoardPiece boardMessage[][] = boardGame.getMatrix();
+			
+			int height = boardGame.getHeight();
+			int width = boardGame.getWidth();
+			
+			// message to sent to the user
+			boolean boardCodefy[][] = new boolean[height][width*2];
+			
+			/**
+			 * If color is a background color, so assigned code 00 in message
+			 * If color is a user snake, so assigned code 01 in message
+			 * If color is other snake, so assigned code 10 in message
+			 */
+			
+			System.out.println("Condificando Mensagem...");
+			
+			for (int i=0; i < boardGame.getHeight(); i++)
+			{
+				for (int j=0; j < boardGame.getWidth(); j++)
+				{
+					// backgroud color
+					if ( boardMessage[i][j].getBackgroundColor() == GameConstants.BACK_COLOR )
+					{
+						// bit 1
+						boardCodefy[i][j*2] = false;
+						// bit 2
+						boardCodefy[i][(j*2)+1] = false;
+					}
+					else 
+					{
+						// bit 1
+						boardCodefy[i][j*2] = false;
+						// bit 2
+						boardCodefy[i][(j*2)+1] = true;					}
+				}
+			}
+		
+			return this.serializeBoardMatrix(boardCodefy, height, width*2);
+		}
+		
+		/**
+		 * Serializes the object board matrix 
+		 * @return a byte array containing a board matrix serialization 
+		 * Based in:
+		 * http://www.guj.com.br/t/transformar-boolean-em-byte-como/39160/8
+		 */
+		private byte[] serializeBoardMatrix (boolean boardCodefy[][], int h, int w)
+		{
+			byte[] toReturn = new byte[(h*w)/8];
+			
+			String values = "";
+			
+			int cont = 0;
+			int pos =0;
+			
+			for (int i=0; i < h; i++)
+			{
+				for (int j=0; j < w; j++)
+				{
+					cont++;
+					values += (boardCodefy[i][j] ? '1' : '0');
+					
+					if (cont == 8)
+					{
+						toReturn[pos] = Byte.valueOf(values, 2);
+						values = "";
+						pos++;
+						cont =0;
+					}
+				}
+			}
+			
+			return toReturn;
+		}
 	}
 	
 	class UpdateGameToClients extends Thread
@@ -242,7 +334,6 @@ public class SocketServerSnake
 				{
 					// the updates occur every GAME_LATENCY milliseconds
 					Thread.sleep(GameConstants.GAME_LATENCY);
-
 					update();
 				}
 
