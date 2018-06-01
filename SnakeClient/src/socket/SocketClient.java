@@ -100,7 +100,9 @@ public class SocketClient
 				
 				// the next package is sent after GAME_LATENCY milliseconds
 				Thread.sleep(GameConstants.GAME_LATENCY);
-				this.receiveFromServer();
+				
+				for (int i=0; i < 10; i++)
+					this.receiveFromServer();
 				
 			}
 
@@ -127,8 +129,6 @@ public class SocketClient
 	
 	private void receiveFromServer () throws ClassNotFoundException
 	{
-		System.out.println("Recebeu dados do server");
-		
 		try 
 		{
 			// The data sent by server has a serialized object board matrix
@@ -137,6 +137,8 @@ public class SocketClient
 			
 			// packet that will be sent by server
 			DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
+
+			System.out.println("Tentando receber pacote do server...");
 			socket.receive(packFromServer);
 			
 			System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
@@ -198,112 +200,5 @@ public class SocketClient
 			
 		}
 		
-	}
-	
-	class GameUpdate extends Thread
-	{
-		@Override
-		public void run()
-		{
-			try{
-				while(true)
-				{
-					// the updates occur every GAME_LATENCY milliseconds
-					Thread.sleep(GameConstants.GAME_LATENCY);
-					receiveFromServer();
-					System.out.println("updating...");
-				}
-
-			}
-
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			} 
-			catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
-		}
-		
-		/**
-		 * Receive data from the server
-		 * @throws ClassNotFoundException 
-		 */
-		private void receiveFromServer () throws ClassNotFoundException
-		{
-			//System.out.println("Recebeu dados do server");
-			try 
-			{
-				// The data sent by server has a serialized object board matrix
-				// Estimated size: 4KB
-				byte[] dataBuffFromServer = new byte[4096];
-				
-				// continuously listens to new data on the socket
-				// packet that will be sent by server
-				DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
-				socket.receive(packFromServer);
-				
-				System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
-				// interpreting object
-				ByteArrayInputStream bis = new ByteArrayInputStream(packFromServer.getData());
-				ObjectInput in = null;
-					
-				Object boardMatrixObject;
-				try 
-				{
-					in = new ObjectInputStream(bis);
-					boardMatrixObject = in.readObject();
-				}
-				finally {
-					try {
-						if (in != null) {
-							in.close();
-					    }
-					} catch (IOException ex) {
-					    // ignore close exception
-					}
-				}
-					
-				PieceCodMessage messageCodefy[][] = (PieceCodMessage[][]) boardMatrixObject;	
-				this.decodeMessage(messageCodefy);
-			
-			}
-			catch (SocketException e)
-			{
-				socket.close();
-				e.printStackTrace();
-			}
-
-			catch (IOException i)
-			{
-				socket.close();
-				i.printStackTrace();
-			}
-		}
-		
-		private void decodeMessage ( PieceCodMessage message[][] )
-		{
-			/**
-			 * If color is a background color, so assigned code 00 in message
-			 * If color is a user snake, so assigned code 01 in message
-			 * If color is other snake, so assigned code 10 in message
-			 */	
-		
-			System.out.println("Decodificando...");
-			String linha;
-			
-			for (int i=0; i < heithBoard; i++)
-			{
-				linha = ".";
-				for (int j=0; j < widthBoard; j++)
-				{
-					if ((!message[i][j].isBit1()) && (!message[i][j].isBit2()) )
-						linha += ".";
-					else linha += "@";
-				}
-				System.out.println(linha);
-			}
-		}
 	}
 }
