@@ -217,6 +217,8 @@ public class SocketServerSnake
 						+ " bytes de dados para o cliente " + entry.getKey());
 				// sends the packet to the client
 				socket.send(packToSend);
+				
+				System.out.println("Dados enviados ao cliente");
 			}		
 		}
 

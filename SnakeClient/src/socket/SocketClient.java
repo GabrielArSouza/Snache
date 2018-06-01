@@ -101,8 +101,7 @@ public class SocketClient
 				// the next package is sent after GAME_LATENCY milliseconds
 				Thread.sleep(GameConstants.GAME_LATENCY);
 				
-				for (int i=0; i < 10; i++)
-					this.receiveFromServer();
+				this.receiveFromServer();
 				
 			}
 
