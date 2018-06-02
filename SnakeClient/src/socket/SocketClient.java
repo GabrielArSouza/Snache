@@ -100,10 +100,13 @@ public class SocketClient
 				
 				// the next package is sent after GAME_LATENCY milliseconds
 				Thread.sleep(GameConstants.GAME_LATENCY);
-				
-				this.receiveFromServer();
-				
+				byte[] receiveData = new byte[1024];
+			    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+			    socket.receive(receivePacket);
+			    String modifiedSentence = new String(receivePacket.getData());
+			    System.out.println("FROM SERVER:" + modifiedSentence);				
 			}
+			
 
 		}
 
@@ -126,78 +129,174 @@ public class SocketClient
 		}
 	}
 	
-	private void receiveFromServer () throws ClassNotFoundException
-	{
-		try 
-		{
-			// The data sent by server has a serialized object board matrix
-			// Estimated size: 100 bytes
-			byte[] dataBuffFromServer = new byte[100];
-			
-			// packet that will be sent by server
-			DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
-
-			System.out.println("Tentando receber pacote do server...");
-			socket.receive(packFromServer);
-			
-			System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
-			
-			this.decodeMessage(packFromServer.getData());
-		
-		}
-		catch (SocketException e)
-		{
-			socket.close();
-			e.printStackTrace();
-		}
-
-		catch (IOException i)
-		{
-			socket.close();
-			i.printStackTrace();
-		}
-	}
+//	private void receiveFromServer () throws ClassNotFoundException
+//	{
+//		try 
+//		{
+//			// The data sent by server has a serialized object board matrix
+//			// Estimated size: 100 bytes
+//			byte[] dataBuffFromServer = new byte[100];
+//			
+//			// packet that will be sent by server
+//			DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
+//
+//			System.out.println("Tentando receber pacote do server...");
+//			socket.receive(packFromServer);
+//			
+//			System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
+//			
+//			this.decodeMessage(packFromServer.getData());
+//		
+//		}
+//		catch (SocketException e)
+//		{
+//			socket.close();
+//			e.printStackTrace();
+//		}
+//
+//		catch (IOException i)
+//		{
+//			socket.close();
+//			i.printStackTrace();
+//		}
+//	}
+//	
+//	private void decodeMessage ( byte[] message )
+//	{
+//		/**
+//		 * If color is a background color, so assigned code 00 in message
+//		 * If color is a user snake, so assigned code 01 in message
+//		 * If color is other snake, so assigned code 10 in message
+//		 */	
+//	
+//		System.out.println("Decodificando...");
+//		int contLine = 0;
+//		int contCol = 0;
+//		
+//		for (int i=0; i < message.length; i++)
+//		{
+//			int value = message[i];
+//			String binaryValue = Integer.toBinaryString(value);
+//			
+//			char[] bits = binaryValue.toCharArray();
+//			for (int j=0; j < 8; j+=2)
+//			{
+//				char bit1 = bits[j];
+//				char bit2 = bits[j+1];
+//			
+//				if ( bit1 == '0' && bit2=='0')
+//					boardClient[contLine][contCol].setBackground(Color.WHITE);
+//				else if (bit1 == '0' && bit2 == '1')
+//					boardClient[contLine][contCol].setBackground(Color.GREEN);
+//				else 
+//					boardClient[contLine][contCol].setBackground(Color.BLACK);
+//			
+//				contCol++;
+//				
+//				if (contCol > (widthBoard-1) )
+//				{
+//					contLine++;
+//					contCol = 0;
+//				}
+//			}
+//			
+//		}
+//		
+//	}
 	
-	private void decodeMessage ( byte[] message )
+	class GameUpdate extends Thread 
 	{
-		/**
-		 * If color is a background color, so assigned code 00 in message
-		 * If color is a user snake, so assigned code 01 in message
-		 * If color is other snake, so assigned code 10 in message
-		 */	
-	
-		System.out.println("Decodificando...");
-		int contLine = 0;
-		int contCol = 0;
-		
-		for (int i=0; i < message.length; i++)
+		@Override
+		public void run ()
 		{
-			int value = message[i];
-			String binaryValue = Integer.toBinaryString(value);
-			
-			char[] bits = binaryValue.toCharArray();
-			for (int j=0; j < 8; j+=2)
+			while(true)
 			{
-				char bit1 = bits[j];
-				char bit2 = bits[j+1];
-			
-				if ( bit1 == '0' && bit2=='0')
-					boardClient[contLine][contCol].setBackground(Color.WHITE);
-				else if (bit1 == '0' && bit2 == '1')
-					boardClient[contLine][contCol].setBackground(Color.GREEN);
-				else 
-					boardClient[contLine][contCol].setBackground(Color.BLACK);
-			
-				contCol++;
-				
-				if (contCol > (widthBoard-1) )
-				{
-					contLine++;
-					contCol = 0;
+				try {
+					Thread.sleep(GameConstants.GAME_LATENCY);
+					this.receiveFromServer();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			
 		}
 		
+		private void receiveFromServer () throws ClassNotFoundException
+		{
+			try 
+			{
+				// The data sent by server has a serialized object board matrix
+				// Estimated size: 100 bytes
+				byte[] dataBuffFromServer = new byte[100];
+				
+				// packet that will be sent by server
+				DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
+				
+				System.out.println("Tentando receber pacote do server...");
+				socket.receive(packFromServer);
+				
+				System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
+				System.out.println(dataBuffFromServer);
+				//this.decodeMessage(packFromServer.getData());
+			
+			}
+			catch (SocketException e)
+			{
+				socket.close();
+				e.printStackTrace();
+			}
+
+			catch (IOException i)
+			{
+				socket.close();
+				i.printStackTrace();
+			}
+		}
+		
+		private void decodeMessage ( byte[] message )
+		{
+			/**
+			 * If color is a background color, so assigned code 00 in message
+			 * If color is a user snake, so assigned code 01 in message
+			 * If color is other snake, so assigned code 10 in message
+			 */	
+		
+			System.out.println("Decodificando...");
+			int contLine = 0;
+			int contCol = 0;
+			
+			for (int i=0; i < message.length; i++)
+			{
+				int value = message[i];
+				String binaryValue = Integer.toBinaryString(value);
+				
+				char[] bits = binaryValue.toCharArray();
+				for (int j=0; j < 8; j+=2)
+				{
+					char bit1 = bits[j];
+					char bit2 = bits[j+1];
+				
+					if ( bit1 == '0' && bit2=='0')
+						boardClient[contLine][contCol].setBackground(Color.WHITE);
+					else if (bit1 == '0' && bit2 == '1')
+						boardClient[contLine][contCol].setBackground(Color.GREEN);
+					else 
+						boardClient[contLine][contCol].setBackground(Color.BLACK);
+				
+					contCol++;
+					
+					if (contCol > (widthBoard-1) )
+					{
+						contLine++;
+						contCol = 0;
+					}
+				}
+				
+			}
+		}
 	}
 }

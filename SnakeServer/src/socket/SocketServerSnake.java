@@ -56,8 +56,8 @@ public class SocketServerSnake
 	 */
 	public void initSocket()
 	{
-		Thread boardUpdater = new BoardUpdater();
-		boardUpdater.start();
+//		Thread boardUpdater = new BoardUpdater();
+//		boardUpdater.start();
 
 //		Thread updateGameToClients = new UpdateGameToClients();
 //		updateGameToClients.start();
@@ -102,32 +102,37 @@ public class SocketServerSnake
 
 				System.out.println("Received direction from client " + clientIP + ": " + snakeDirectionFromClient);
 
-				// the player wasn't connected to the game: assigns a new snake to him/her
-				if(clientInfo == null)
-				{
-					EnumSnakeDirection directionAsEnum = EnumSnakeDirection.getValue(snakeDirectionFromClient);
-					SharedSnakeDirection sharedDirection = new SharedSnakeDirection(directionAsEnum);
-
-					Snake snake = game.createSnake(sharedDirection);
-
-					if(snake != null)
-					{
-						clientInfo = new ClientInfo(sharedDirection, snake);
-						clientInfos.put(clientIP, clientInfo);
-					}
-
-					else
-					{
-						System.out.println("for some reason a snake couldn't be created");
-					}
-				}
-
-				// player already exists: update the direction of his/her snake if it wasn't
-				// updated yet
-				else
-				{
-					clientInfo.updateDirection(snakeDirectionFromClient);
-				}
+//				// the player wasn't connected to the game: assigns a new snake to him/her
+//				if(clientInfo == null)
+//				{
+//					EnumSnakeDirection directionAsEnum = EnumSnakeDirection.getValue(snakeDirectionFromClient);
+//					SharedSnakeDirection sharedDirection = new SharedSnakeDirection(directionAsEnum);
+//
+//					Snake snake = game.createSnake(sharedDirection);
+//
+//					if(snake != null)
+//					{
+//						clientInfo = new ClientInfo(sharedDirection, snake);
+//						clientInfos.put(clientIP, clientInfo);
+//					}
+//
+//					else
+//					{
+//						System.out.println("for some reason a snake couldn't be created");
+//					}
+//				}
+//
+//				// player already exists: update the direction of his/her snake if it wasn't
+//				// updated yet
+//				else
+//				{
+//					clientInfo.updateDirection(snakeDirectionFromClient);
+//				}
+				
+				String capitalizedSentence = "oi";
+                byte[] sendData = capitalizedSentence.getBytes();
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, clientIP, SocketConstants.STANDARD_PORT);
+                socket.send(sendPacket);
 
 			}
 			
@@ -207,18 +212,20 @@ public class SocketServerSnake
 				entry.getValue().setDirectionUpdated(false);
 				
 				// builds the package to be sent to the user
-				byte[] dataToSend = this.codifyMessage();
-				
-				// wrap the data on board matrix
-				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
-						SocketConstants.STANDARD_PORT);
-				
-				System.out.println("Eviando um pacote com " + dataToSend.length
-						+ " bytes de dados para o cliente " + entry.getKey());
-				// sends the packet to the client
-				socket.send(packToSend);
-				
-				System.out.println("Dados enviados ao cliente");
+				//byte[] dataToSend = this.codifyMessage();
+//				String teste = "oi";
+//				byte[] dataToSend = teste.getBytes();
+//				
+//				// wrap the data on board matrix
+//				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
+//						SocketConstants.STANDARD_PORT);
+//				
+//				System.out.println("Eviando um pacote com " + dataToSend.length
+//						+ " bytes de dados para o cliente " + entry.getKey());
+//				// sends the packet to the client
+//				socket.send(packToSend);
+//				
+//				System.out.println("Dados enviados ao cliente");
 			}		
 		}
 
