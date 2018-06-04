@@ -45,7 +45,7 @@ public class FrmBoard extends JFrame
 	 */
 	public FrmBoard(int height, int width)
 	{
-		this(height, width, 10);
+		this(height, width, 7);
 	}
 
 	/**

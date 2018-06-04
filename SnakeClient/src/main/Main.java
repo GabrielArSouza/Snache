@@ -17,9 +17,9 @@ public class Main
 	 */
 	public static void main(String[] args) throws ClassNotFoundException
 	{
-		FrmBoard frmBoard = new FrmBoard(20, 20);
+		FrmBoard frmBoard = new FrmBoard(100, 100);
 		frmBoard.setVisible(true);
-		SocketClient socketClient = new SocketClient();
-		socketClient.initSocket(frmBoard.getFrmBoardPieces(), 20, 20);
+		//SocketClient socketClient = new SocketClient();
+		//socketClient.initSocket(frmBoard.getFrmBoardPieces(), 20, 20);
 	}
 }

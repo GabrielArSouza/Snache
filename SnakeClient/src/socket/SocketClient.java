@@ -254,12 +254,6 @@ public class SocketClient
 		
 		private void decodeMessage ( byte[] message )
 		{
-			/**
-			 * If color is a background color, so assigned code 00 in message
-			 * If color is a user snake, so assigned code 01 in message
-			 * If color is other snake, so assigned code 10 in message
-			 */	
-		
 			System.out.println("Decodificando...");
 			boolean[] messageDecode = new boolean[message.length * 8];
 			int cont =0;
@@ -274,36 +268,7 @@ public class SocketClient
 					messageDecode[cont] = (message[i] & (1 << j)) != 0;
 					cont++;
 				}	
-				
-//				// convert array
-//				if ( array[7] == true )
-//					array[7] = false;
-//				else 
-//				{
-//					int j=7;
-//					while ( array[j] ) j--;
-//					
-//					array[j] = false;
-//					for (int k = j+1; k < 8; k++)
-//						array[k] = true;					
-//				}
-//				
-//				for (int k=0; k <8; k++)
-//				{
-//					if (array[k])
-//						array[k] = false;
-//					else array[k] = true;
-//				}
-//				
-//				// add message
-//				int aux = 0;
-//				for (int j=0; j < 8; j++)
-//				{
-//					messageDecode[cont] = array[j];
-//					cont++;
-//				}
-					
-				
+	
 			}
 			
 			int markCol = 0;

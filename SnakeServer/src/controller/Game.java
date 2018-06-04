@@ -370,5 +370,10 @@ public class Game
 	public BoardPieceMatrix getBoardMatrix ()
 	{
 		return this.boardMatrix;
-	}	
+	}
+
+	public List<Snake> getSnakes()
+	{
+		return snakes;
+	}
 }
