@@ -261,38 +261,72 @@ public class SocketClient
 			 */	
 		
 			System.out.println("Decodificando...");
-				
 			boolean[] messageDecode = new boolean[message.length * 8];
 			int cont =0;
 			
+			boolean[] array = new boolean[8];
 			// Decode message
 			for (int i=0; i < message.length; i++)
 			{
 				// Transform a byte in a boolean array
-				boolean[] array = new boolean[8];
 				for (int j=0; j<8 ;j++){
-					array[j] = (message[i] & (1 << j)) != 0;
-				}		
-			
-				// add boolean array in a message decode array
-				for (int j = cont; j < cont+8; j++)
-					messageDecode[j] = array[j%8];
-								
-				cont+=8;
+					//array[j] = (message[i] & (1 << j)) != 0;
+					messageDecode[cont] = (message[i] & (1 << j)) != 0;
+					cont++;
+				}	
+				
+//				// convert array
+//				if ( array[7] == true )
+//					array[7] = false;
+//				else 
+//				{
+//					int j=7;
+//					while ( array[j] ) j--;
+//					
+//					array[j] = false;
+//					for (int k = j+1; k < 8; k++)
+//						array[k] = true;					
+//				}
+//				
+//				for (int k=0; k <8; k++)
+//				{
+//					if (array[k])
+//						array[k] = false;
+//					else array[k] = true;
+//				}
+//				
+//				// add message
+//				int aux = 0;
+//				for (int j=0; j < 8; j++)
+//				{
+//					messageDecode[cont] = array[j];
+//					cont++;
+//				}
+					
+				
 			}
 			
 			int markCol = 0;
 			int markLine = 0;
 			
+			char[][] boardCode = new char[heithBoard][widthBoard];
+			
 			for (int i=0; i < messageDecode.length; i+=2)
 			{
 				if (messageDecode[i] == false && messageDecode[i+1] == false)
+				{
 					boardClient[markLine][markCol].setBackground(Color.WHITE);
-				else if (messageDecode[i] == false && messageDecode[i+1] == true)
+					boardCode[markLine][markCol] = '.';
+				}					
+				else if(messageDecode[i] == false && messageDecode[i+1] == true)
+				{
 					boardClient[markLine][markCol].setBackground(Color.GREEN);
-				else 
+					boardCode[markLine][markCol] = '@';
+				}else
+				{
 					boardClient[markLine][markCol].setBackground(Color.BLACK);
-				
+					boardCode[markLine][markCol] = 'O';
+				}
 				markCol++;
 				
 				// verify board limits
@@ -302,8 +336,16 @@ public class SocketClient
 					markCol = 0;
 				}
 			}
-			
-	
+
+			for (int i =0; i< heithBoard; i++)
+			{
+				String linha = "";
+				for (int j=0; j < widthBoard; j++)
+				{
+					linha+=boardCode[i][j];
+				}
+				System.out.println(linha);
+			}
 		}
 	}
 }

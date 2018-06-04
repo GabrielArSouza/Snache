@@ -256,7 +256,7 @@ public class SocketServerSnake
 			int width = boardGame.getWidth();
 			
 			// message to sent to the user
-			boolean boardCodefy[][] = new boolean[height][width*2];
+			boolean boardCodefy[] = new boolean[height*width*2];
 			
 			/**
 			 * If color is a background color, so assigned code 00 in message
@@ -266,6 +266,7 @@ public class SocketServerSnake
 			
 			System.out.println("Condificando Mensagem...");
 			
+			int cont = 0;
 			for (int i=0; i < boardGame.getHeight(); i++)
 			{
 				for (int j=0; j < boardGame.getWidth(); j++)
@@ -274,21 +275,25 @@ public class SocketServerSnake
 					if ( boardMessage[i][j].getBackgroundColor() == GameConstants.BACK_COLOR )
 					{
 						// bit 1
-						boardCodefy[i][j*2] = false;
+						boardCodefy[cont] = false;
+						cont++;
 						// bit 2
-						boardCodefy[i][(j*2)+1] = false;
-					
+						boardCodefy[cont] = false;
+						cont++;
 					}
 					else 
 					{
 						// bit 1
-						boardCodefy[i][j*2] = false;
+						boardCodefy[cont] = false;
+						cont++;						
 						// bit 2
-						boardCodefy[i][(j*2)+1] = true;					}
+						boardCodefy[cont] = true;
+						cont++;
+					}
 				}
 			}
 		
-			return this.serializeBoardMatrix(boardCodefy, height, width*2);
+			return this.serializeBoardMatrix(boardCodefy);
 		}
 		
 		/**
@@ -297,32 +302,41 @@ public class SocketServerSnake
 		 * Based in:
 		 * http://www.guj.com.br/t/transformar-boolean-em-byte-como/39160/8
 		 */
-		private byte[] serializeBoardMatrix (boolean boardCodefy[][], int h, int w)
+		private byte[] serializeBoardMatrix (boolean boardCodefy[])
 		{
-			byte[] toReturn = new byte[(h*w)/8];
+			byte[] toReturn = new byte[boardCodefy.length/8];
 			
 			String values = "";
+			String linha = "";
+			int aux = 0;
 			
 			int cont = 0;
 			int pos =0;
 			
-			for (int i=0; i < h; i++)
+			for (int i=0; i < boardCodefy.length; i++)
 			{
-				for (int j=0; j < w; j++)
+				cont++;
+				values += (boardCodefy[i] ? '1' : '0'); 
+				
+				if (cont == 8)
 				{
-					cont++;
-					values += (boardCodefy[i][j] ? '1' : '0');
-					
-					if (cont == 8)
+					linha += values;
+					aux++;
+					if (aux == 4)
 					{
-						toReturn[pos] = Byte.valueOf(values, 2);
-						values = "";
-						pos++;
-						cont =0;
+						aux = 0;
+						System.out.println(linha);
+						linha = "";
 					}
+						
+					
+					toReturn[pos] = Byte.valueOf(values, 2);
+					values = "";
+					pos++;
+					cont = 0;
 				}
 			}
-			
+					
 			return toReturn;
 		}
 	}
