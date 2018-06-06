@@ -20,6 +20,7 @@ import controller.Game;
 import controller.GameConstants;
 import controller.SharedSnakeDirection;
 import domain.Snake;
+import domain.SnakeConstants;
 import domain.SnakePiece;
 import presentation.BoardPieceMatrix;
 import presentation.FrmBoardPiece;
@@ -206,7 +207,7 @@ public class SocketServerSnake
 			game.drawSnakes();
 			
 			//Codefy snakes for send to users
-			List<BitSet> snakes = this.codifyMessage();
+			BitSet message = this.codifyMessage();
 			
 			// sets the "updateDirection" attribute of the players to false so that the next
 			// game iteration will consume the commands sent by the players
@@ -215,7 +216,7 @@ public class SocketServerSnake
 				entry.getValue().setDirectionUpdated(false);
 
 				// builds the package to be sent to the user
-				byte[] dataToSend = this.serializeBoardMatrix(snakes, 0);
+				byte[] dataToSend = this.serializeMessage(message, 0);
 				
 				// wrap the data on board matrix
 				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
@@ -230,7 +231,7 @@ public class SocketServerSnake
 				System.out.println("Sent data to client");
 			}		
 		}
-
+		
 		/**
 		 * Disconnect the inactive clients from the game.
 		 */
@@ -251,71 +252,41 @@ public class SocketServerSnake
 				}
 			}
 		}
-		private List<BitSet> codifyMessage () throws IOException
+		
+		
+		private BitSet codifyMessage () throws IOException
 		{
 			List<Snake> snakes = game.getSnakes();
-			List<BitSet> snakesCodefy = new ArrayList<BitSet>();
 			
-			//each snake position is a 2 bytes
-			BitSet posColumn = new BitSet();
-			BitSet posRow = new BitSet();
-			
-			int coordColumn = 0;
-			int coordRow = 0;
-			
+			byte[] snakesPositions = new byte[2* (SnakeConstants.STANDARD_BODY_SIZE+1)  * snakes.size()];
+			int cont =0;
 			for (Snake s : snakes)
 			{
-				// Snake head
-				coordColumn = s.getHead().getColumn();
-				coordRow = s.getHead().getRow();
-				
-				posColumn = BitSet.valueOf(new long[]{coordColumn});
-				posRow = BitSet.valueOf(new long[]{coordRow});
-				
-				snakesCodefy.add(posColumn);
-				snakesCodefy.add(posRow);
-				
-				//Snake body
-				List<SnakePiece> bodySnake = s.getBody();
-				for (SnakePiece piece : bodySnake)
+				snakesPositions[cont++] = (byte)s.getHead().getRow();
+				snakesPositions[cont++] = (byte)s.getHead().getColumn();
+								
+				for ( SnakePiece b : s.getBody())
 				{
-					coordColumn = piece.getColumn();
-					coordRow = piece.getRow();
-					
-					posColumn = BitSet.valueOf(new long[]{coordColumn});
-					posRow = BitSet.valueOf(new long[]{coordRow});
-					
-					snakesCodefy.add(posColumn);
-					snakesCodefy.add(posRow);
+					snakesPositions[cont++] = (byte)b.getRow();
+					snakesPositions[cont++] = (byte)b.getColumn();
 				}
 			}
 			
-			return snakesCodefy;
+			return BitSet.valueOf(snakesPositions);
 		}
 		
-		/**
-		 * Serializes the object board matrix 
-		 * @return a byte array containing a board matrix serialization 
-		 * Based in:
-		 * http://www.guj.com.br/t/transformar-boolean-em-byte-como/39160/8
-		 */
-		private byte[] serializeBoardMatrix (List<BitSet> snakes, int posClient)
+		
+		private byte[] serializeMessage (BitSet message, int posClient)
 		{
-			byte[] toReturn = new byte[snakes.size()];
 			
-			int cont = 0;
-			for (BitSet b : snakes)
-			{
-				// denote snake client
-				if (cont == posClient*10)
-					b.set(0, true);
-				
-				//Only one byte
-				byte[] aux = b.toByteArray();
-				toReturn[cont] = aux[0];
-				cont++;
-			}	
-			return toReturn;
+			// each snake piece has 2 bytes (16 bits)
+			int bitChange = 16 * (SnakeConstants.STANDARD_BODY_SIZE+1) * posClient;
+			message.set(bitChange, true);
+			
+			byte[] messageSerializated = message.toByteArray();
+			message.set(bitChange, false);
+			
+			return messageSerializated;
 		}
 	}
 }
