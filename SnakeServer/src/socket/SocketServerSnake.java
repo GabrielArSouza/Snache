@@ -301,7 +301,7 @@ public class SocketServerSnake
 		 */
 		private byte[] serializeBoardMatrix (List<BitSet> snakes, int posClient)
 		{
-			byte[] toReturn = new byte[snakes.size()/8];
+			byte[] toReturn = new byte[snakes.size()];
 			
 			int cont = 0;
 			for (BitSet b : snakes)

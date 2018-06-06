@@ -10,6 +10,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.BitSet;
 
 import controller.EnumSnakeDirection;
 import controller.GameConstants;
@@ -32,20 +33,15 @@ public class SocketClient
 	/** Singleton instance whose snake direction changes will be caught of. */
 	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();
 	
-	private FrmBoardPiece boardClient[][];
-	private int widthBoard;
-	private int heithBoard;
-
+	private FrmBoard boardClient;
 	/**
 	 * Initializes the socket and calls its main method.
 	 * @throws ClassNotFoundException 
 	 */
-	public void initSocket( FrmBoardPiece boardClient[][], int w, int h ) throws ClassNotFoundException
+	public void initSocket( FrmBoard boardClient ) throws ClassNotFoundException
 	{
 		this.boardClient = boardClient;
-		this.widthBoard = w;
-		this.heithBoard = h;
-		
+	
 		/**
 		 * Create Thread for update client direction 
 		 */
@@ -125,80 +121,6 @@ public class SocketClient
 		}
 	}
 	
-	private void receiveFromServer () throws ClassNotFoundException
-	{
-		try 
-		{
-			// The data sent by server has a serialized object board matrix
-			// Estimated size: 100 bytes
-			byte[] dataBuffFromServer = new byte[100];
-			
-			// packet that will be sent by server
-			DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
-
-			System.out.println("Tentando receber pacote do server...");
-			socket.receive(packFromServer);
-			
-			System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
-			
-			this.decodeMessage(packFromServer.getData());
-		
-		}
-		catch (SocketException e)
-		{
-			socket.close();
-			e.printStackTrace();
-		}
-
-		catch (IOException i)
-		{
-			socket.close();
-			i.printStackTrace();
-		}
-	}
-	
-	private void decodeMessage ( byte[] message )
-	{
-		/**
-		 * If color is a background color, so assigned code 00 in message
-		 * If color is a user snake, so assigned code 01 in message
-		 * If color is other snake, so assigned code 10 in message
-		 */	
-	
-		System.out.println("Decodificando...");
-		int contLine = 0;
-		int contCol = 0;
-		
-		for (int i=0; i < message.length; i++)
-		{
-			int value = message[i];
-			String binaryValue = Integer.toBinaryString(value);
-			
-			char[] bits = binaryValue.toCharArray();
-			for (int j=0; j < 8; j+=2)
-			{
-				char bit1 = bits[j];
-				char bit2 = bits[j+1];
-			
-				if ( bit1 == '0' && bit2=='0')
-					boardClient[contLine][contCol].setBackground(Color.WHITE);
-				else if (bit1 == '0' && bit2 == '1')
-					boardClient[contLine][contCol].setBackground(Color.GREEN);
-				else 
-					boardClient[contLine][contCol].setBackground(Color.BLACK);
-			
-				contCol++;
-				
-				if (contCol > (widthBoard-1) )
-				{
-					contLine++;
-					contCol = 0;
-				}
-			}
-			
-		}
-		
-	}
 	
 	class GameUpdate extends Thread 
 	{
@@ -255,62 +177,62 @@ public class SocketClient
 		private void decodeMessage ( byte[] message )
 		{
 			System.out.println("Decodificando...");
-			boolean[] messageDecode = new boolean[message.length * 8];
-			int cont =0;
+			boardClient.clearBoard();
 			
-			boolean[] array = new boolean[8];
-			// Decode message
+			int posColumn = 0;
+			int posRow = 0;
+			
+			/**
+			 * This message contains all game's snakes 
+			 * Each byte is a snake position
+			 * A snake contains 20 bytes (160 bits)
+			 * The snake that start in bit '1' is a client's snake
+			 */
+			boolean flagIsClientSanke = false;
+			Color colorInPieceBord;
 			for (int i=0; i < message.length; i++)
 			{
-				// Transform a byte in a boolean array
-				for (int j=0; j<8 ;j++){
-					//array[j] = (message[i] & (1 << j)) != 0;
-					messageDecode[cont] = (message[i] & (1 << j)) != 0;
-					cont++;
-				}	
-	
-			}
-			
-			int markCol = 0;
-			int markLine = 0;
-			
-			char[][] boardCode = new char[heithBoard][widthBoard];
-			
-			for (int i=0; i < messageDecode.length; i+=2)
-			{
-				if (messageDecode[i] == false && messageDecode[i+1] == false)
+				// For each snake, verify that it belongs to the client
+				if (i%20 == 0)
 				{
-					boardClient[markLine][markCol].setBackground(Color.WHITE);
-					boardCode[markLine][markCol] = '.';
-				}					
-				else if(messageDecode[i] == false && messageDecode[i+1] == true)
-				{
-					boardClient[markLine][markCol].setBackground(Color.GREEN);
-					boardCode[markLine][markCol] = '@';
-				}else
-				{
-					boardClient[markLine][markCol].setBackground(Color.BLACK);
-					boardCode[markLine][markCol] = 'O';
+					// verify if first bit is setting in 1
+					if ( (message[i] & (1 << 0)) != 0 )
+					{
+						flagIsClientSanke = true;
+						
+						// transform a byte in a correct byte
+						BitSet newByte = new BitSet();
+						newByte.set(0, 0);
+						
+						for (int j=1; j < 8; j++)
+							newByte.set(j, (message[i] & (1 << j)) != 0 );
+						
+						message[i] = newByte.toByteArray()[0];
+ 					}
+					else flagIsClientSanke = false;
 				}
-				markCol++;
 				
-				// verify board limits
-				if (markCol >= widthBoard)
+				// Define snake's color
+				if (flagIsClientSanke)
+					colorInPieceBord = Color.GREEN;
+				else 
+					colorInPieceBord = Color.BLACK;
+							
+				if (i%2 == 0)
 				{
-					markLine++;
-					markCol = 0;
+					// A number between 0 and 127
+					posColumn = Byte.toUnsignedInt(message[i]);
+				}
+				else 
+				{
+					// A number between 0 and 127
+					posRow = Byte.toUnsignedInt(message[i]);
+					boardClient.setColorAt(posRow, posColumn, colorInPieceBord);
+					System.out.println(posRow + " " + posColumn);
+					
 				}
 			}
-
-			for (int i =0; i< heithBoard; i++)
-			{
-				String linha = "";
-				for (int j=0; j < widthBoard; j++)
-				{
-					linha+=boardCode[i][j];
-				}
-				System.out.println(linha);
-			}
+				
 		}
 	}
 }

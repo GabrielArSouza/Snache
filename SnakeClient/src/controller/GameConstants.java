@@ -6,5 +6,5 @@ package controller;
 public class GameConstants
 {
 	/** Time between two updates of the board. */
-	public static final int GAME_LATENCY = 200;
+	public static final int GAME_LATENCY = 600;
 }
