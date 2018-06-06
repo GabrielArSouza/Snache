@@ -19,6 +19,7 @@ import domain.SnakeConstants;
 import domain.SnakePiece;
 import presentation.BoardPieceMatrix;
 
+// TODO: Auto-generated Javadoc
 /**
  * Class that implements the game mechanics.
  *
@@ -119,7 +120,7 @@ public class Game
 	 *
 	 * @param sharedDirection
 	 *            direction changer associated to the new snake
-	 * @return the snake created, or null if the creation wasn't possible 
+	 * @return the snake created, or null if the creation wasn't possible
 	 */
 	public Snake createSnake(SharedSnakeDirection sharedDirection)
 	{
@@ -202,15 +203,25 @@ public class Game
 	}
 
 	/**
-	 * Moves all the snakes on the board.
+	 * Moves all the snakes on the board. Builds a <Snake, Integer> map containing
+	 * the order in which the snakes moved.
+	 *
+	 * @return a map whose keys are the snakes, and each value is the time at which
+	 *         each snake moved
 	 */
-	public void moveSnakes()
+	public Map<Snake, Integer> moveSnakes()
 	{
+		// times in which the snakes moved 
+		Map<Snake, Integer> moveTimes = new HashMap<Snake, Integer>();
+		
 		// shuffles the snake list to *try* to be fair with the players
 		Collections.shuffle(snakes);
 
 		// using iterator so that we can delete snakes while iterating the snake list
 		ListIterator<Snake> snakeIterator = snakes.listIterator();
+		
+		// time in which the snakes will move at 
+		int moveTime = 0;
 
 		while(snakeIterator.hasNext())
 		{
@@ -224,10 +235,14 @@ public class Game
 			EnumSnakeDirection newDir = snakeSharedDirections.get(snake).consume();
 
 			// Valid direction changes
-			if((newDir == EnumSnakeDirection.UP && (oldDir == EnumSnakeDirection.LEFT || oldDir == EnumSnakeDirection.RIGHT))
-					|| (newDir == EnumSnakeDirection.DOWN && (oldDir == EnumSnakeDirection.LEFT || oldDir == EnumSnakeDirection.RIGHT))
-					|| (newDir == EnumSnakeDirection.LEFT && (oldDir == EnumSnakeDirection.UP || oldDir == EnumSnakeDirection.DOWN))
-					|| (newDir == EnumSnakeDirection.RIGHT && (oldDir == EnumSnakeDirection.UP || oldDir == EnumSnakeDirection.DOWN)))
+			if((newDir == EnumSnakeDirection.UP
+					&& (oldDir == EnumSnakeDirection.LEFT || oldDir == EnumSnakeDirection.RIGHT))
+					|| (newDir == EnumSnakeDirection.DOWN
+							&& (oldDir == EnumSnakeDirection.LEFT || oldDir == EnumSnakeDirection.RIGHT))
+					|| (newDir == EnumSnakeDirection.LEFT
+							&& (oldDir == EnumSnakeDirection.UP || oldDir == EnumSnakeDirection.DOWN))
+					|| (newDir == EnumSnakeDirection.RIGHT
+							&& (oldDir == EnumSnakeDirection.UP || oldDir == EnumSnakeDirection.DOWN)))
 			{
 				snake.setDirection(newDir);
 			}
@@ -266,7 +281,12 @@ public class Game
 				killMovedSnake(snake);
 				snakeIterator.remove();
 			}
+			
+			// records the time at which this snake moved 
+			moveTimes.put(snake, moveTime++);
 		}
+		
+		return moveTimes;
 	}
 
 	/**
@@ -292,7 +312,8 @@ public class Game
 	 * Kills a snake that has moved already. Frees the space previously occupied by
 	 * the snake, and remove references to that snake on the map attributes.
 	 *
-	 * @param snake            the snake to be killed
+	 * @param snake
+	 *            the snake to be killed
 	 */
 	public void killMovedSnake(Snake snake)
 	{
@@ -362,16 +383,22 @@ public class Game
 			return currentId;
 		}
 	}
-	
+
 	/**
-	 * Gets the board matrix game
+	 * Gets the board matrix game.
+	 *
 	 * @return the board matrix object
 	 */
-	public BoardPieceMatrix getBoardMatrix ()
+	public BoardPieceMatrix getBoardMatrix()
 	{
 		return this.boardMatrix;
 	}
 
+	/**
+	 * Gets the snakes.
+	 *
+	 * @return the snakes
+	 */
 	public List<Snake> getSnakes()
 	{
 		return snakes;
