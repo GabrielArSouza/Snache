@@ -36,6 +36,8 @@ public class ClientInfo
 
 	/** The player's snake. */
 	private Snake snake;
+	
+	private int port;
 
 	/**
 	 * Instantiates a new object.
@@ -45,12 +47,18 @@ public class ClientInfo
 	 * @param snake
 	 *            the snake
 	 */
-	public ClientInfo(SharedSnakeDirection sharedSnakeDirection, Snake snake)
+	public ClientInfo(SharedSnakeDirection sharedSnakeDirection, Snake snake, int port)
 	{
 		this.sharedSnakeDirection = sharedSnakeDirection;
 		deadCont = MAX_ITERATIONS;
 		directionUpdated = false;
 		this.snake = snake;
+		this.port = port;
+	}
+	
+	public int getPort()
+	{
+		return port;
 	}
 
 	/**

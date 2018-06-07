@@ -11,6 +11,9 @@ import controller.GameConstants;
  */
 public class BoardPieceMatrix implements Serializable
 {
+	/** ID for serialization purposes */
+	private static final long serialVersionUID = 1118830666788146452L;
+
 	/** The UI pieces of the board. */
 	private FrmBoardPiece frmBoardPieces[][];
 

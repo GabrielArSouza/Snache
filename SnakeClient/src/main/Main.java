@@ -18,8 +18,8 @@ public class Main
 	{
 		BoardFrame frm = new BoardFrame(50, 50, 10);
 		frm.setVisible(true);
-		SocketClient socketClient = new SocketClient();
-		socketClient.initSocket(frm);
+		SocketClient socketClient = new SocketClient(frm);
+		socketClient.init();
 		
 	}
 }
