@@ -18,7 +18,7 @@ public class UserInput implements KeyListener
 	 * (Unique) instance of the singleton where the player commands will be stored.
 	 */
 	private SingletonSnakeDirectionChange sharedDirection = SingletonSnakeDirectionChange.getInstance();
-
+	
 	/*
 	 * (non-Javadoc) This event isn't handled in this game.
 	 * 
@@ -39,7 +39,7 @@ public class UserInput implements KeyListener
 	 */
 	@Override
 	public void keyPressed(KeyEvent e)
-	{
+	{	
 		// down arrow
 		if(e.getKeyCode() == 40)
 		{

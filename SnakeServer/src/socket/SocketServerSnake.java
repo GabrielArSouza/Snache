@@ -5,16 +5,19 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-import controller.EnumSnakeDirection;
 import controller.Game;
 import controller.GameConstants;
-import controller.SharedSnakeDirection;
 import domain.Snake;
+import domain.SnakeConstants;
+import domain.SnakePiece;
 
+// TODO: Auto-generated Javadoc
 /**
  * This class implements the server-side of the socket communication between the
  * server and the players. It also converts the commands sent by the users in
@@ -54,6 +57,9 @@ public class SocketServerSnake
 		Thread boardUpdater = new BoardUpdater();
 		boardUpdater.start();
 
+		// Thread updateGameToClients = new UpdateGameToClients();
+		// updateGameToClients.start();
+
 		try
 		{
 			socket = new DatagramSocket(SocketConstants.STANDARD_PORT);
@@ -74,38 +80,43 @@ public class SocketServerSnake
 	{
 		try
 		{
-			// the data sent by the players has only one character: the snake new direction;
-			// so the buff has size 1.
+			// the data sent by the players has only one character (the snake new direction)
+			// or zero (the package for connection request), so the buffer has 1 as max size
 			byte[] dataBuffFromClient = new byte[1];
 
 			// continuously listens to new data on the socket
 			while(true)
 			{
-				// packet that will be sent by one player
+				System.out.println("-----------------------------------------------------");
+				System.out.println("while(true) on receiveFromClients()");
+
+				// packet that will be received from a player
 				DatagramPacket packFromClient = new DatagramPacket(dataBuffFromClient, dataBuffFromClient.length);
 				socket.receive(packFromClient);
 
-				// direction sent by the player through the packet
-				String snakeDirectionFromClient = new String(packFromClient.getData());
-
 				// player who sent the data
 				InetAddress clientIP = packFromClient.getAddress();
-				ClientInfo clientInfo = clientInfos.get(clientIP);
 
-				System.out.println("Received direction from client " + clientIP + ": " + snakeDirectionFromClient);
-
-				// the player wasn't connected to the game: assigns a new snake to him/her
-				if(clientInfo == null)
+				// new client trying to connect
+				if(packFromClient.getLength() == 0)
 				{
-					EnumSnakeDirection directionAsEnum = EnumSnakeDirection.getValue(snakeDirectionFromClient);
-					SharedSnakeDirection sharedDirection = new SharedSnakeDirection(directionAsEnum);
-
-					Snake snake = game.createSnake(sharedDirection);
+					ClientInfo clientInfo = new ClientInfo(packFromClient.getPort());
+					
+					System.out.println("client " + clientIP + " trying to connect");
+					
+					Snake snake = null;
+					
+					synchronized(game)
+					{
+						snake = game.createSnake(clientInfo);
+					}
+					
+					clientInfo.setSnake(snake);
 
 					if(snake != null)
 					{
-						clientInfo = new ClientInfo(sharedDirection, snake);
 						clientInfos.put(clientIP, clientInfo);
+						System.out.println("the client " + clientIP + " received the snake:" + snake.getId());
 					}
 
 					else
@@ -114,14 +125,24 @@ public class SocketServerSnake
 					}
 				}
 
-				// player already exists: update the direction of his/her snake if it wasn't
-				// updated yet
+				// the client is in the game already
 				else
 				{
+					// data sent by the player
+					byte[] dataFromClient = packFromClient.getData();
+
+					// direction sent by the player through the socket
+					String snakeDirectionFromClient = new String(dataFromClient);
+					System.out.println("Received direction from client " + clientIP + ": " + snakeDirectionFromClient);
+
+					ClientInfo clientInfo = clientInfos.get(clientIP);
 					clientInfo.updateDirection(snakeDirectionFromClient);
 				}
 
+				System.out.println("endwhile receive()");
+				System.out.println("-----------------------------------------------------");
 			}
+
 		}
 
 		catch (SocketException e)
@@ -158,6 +179,8 @@ public class SocketServerSnake
 			{
 				while(true)
 				{
+					System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
+					System.out.println("while(true) on update");
 					// the updates occur every GAME_LATENCY milliseconds
 					Thread.sleep(GameConstants.GAME_LATENCY);
 
@@ -165,7 +188,10 @@ public class SocketServerSnake
 
 					// prints the board on the console
 					// TODO remove this call; it's used only for debug purposes
-					game.printBoardMatrix();
+					// game.printBoardMatrix();
+					System.out.println("endwhile update()");
+					System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
+
 				}
 
 			}
@@ -174,24 +200,91 @@ public class SocketServerSnake
 			{
 				e.printStackTrace();
 			}
+
+			catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		/**
 		 * Updates the game board.
+		 *
+		 * @throws IOException
+		 *             Signals that an I/O exception has occurred.
 		 */
-		private void update()
+		private void update() throws IOException
 		{
-			System.out.println("updating snakes...");
+			System.out.println("killing inactive snakes...");
 			killInactiveClients();
 
-			game.moveSnakes();
-			game.drawSnakes();
-
-			// sets the "updateDirection" attribute of the players to false so that the next
-			// game iteration will consume the commands sent by the players
-			for(Map.Entry<InetAddress, ClientInfo> entry : clientInfos.entrySet())
+			System.out.println("moving the snakes...");
+			Map<Snake, Integer> posInTheSnakeList = game.moveSnakes();
+			
+			for(Map.Entry<Snake, Integer> entry : posInTheSnakeList.entrySet())
 			{
-				entry.getValue().setDirectionUpdated(false);
+				System.out.println("cobra "+ entry.getKey().getId() + " esta na posicao " + entry.getValue());
+			}
+
+			// Message to be sent to the players. The snakes in this message are in the
+			// *same* order of the snake list in the Game object
+			BitSet message = this.snakeListToBitSet();
+
+			// Iterates over the players and send the board to them.
+			Iterator<Map.Entry<InetAddress, ClientInfo>> entryIterator = clientInfos.entrySet().iterator();
+			
+			System.out.println("sending the board to the clients...");
+			while(entryIterator.hasNext())
+			{
+				Map.Entry<InetAddress, ClientInfo> entry = entryIterator.next();
+				ClientInfo client = entry.getValue();
+				
+				// decreases the dead cont of that client
+				client.decreaseDeadCont();
+				
+				// the client reached the maximum number of connection tentatives
+				if(!client.isActive())
+				{
+					// removes the snake from the snake list
+					game.killInactiveSnake(client.getSnake());
+					
+					// removes the client from the client list
+					entryIterator.remove();
+					
+					System.out.println("removing the client " + entry.getKey() + " because of inactivity!");
+					continue;
+				}
+				
+				Snake snake = client.getSnake();
+				System.out.println("sending to the client: " + entry.getKey() + " whose snake is: " + snake.getId());
+				
+				Object posOfClientSnake = posInTheSnakeList.get(snake);
+				
+				// the client's snake isn't in the snake list anymore: his/her snake died!
+				if(posOfClientSnake == null)
+				{
+					entryIterator.remove();
+					System.out.println("removing the client " + entry.getKey() + " because his/her snake died!");
+					continue;
+				}
+				
+				System.out.println("the position of the snake in the list is " + posOfClientSnake);
+				
+				// builds the byte array that will be sent through socket
+				byte[] dataToSend = this.serializeBitSet(message, (int) posOfClientSnake);
+
+				// builds the package to be sent to the user
+				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
+						client.getPort());
+
+				System.out.println("Sending a pack with " + dataToSend.length + " data bytes to the client "
+						+ entry.getKey() + " on the port " + client.getPort());
+
+				// sends the packet to the client
+				socket.send(packToSend);
+
+				System.out.println("the data was (supposely succesfully) sent to the client");
 			}
 		}
 
@@ -214,6 +307,69 @@ public class SocketServerSnake
 					entryIterator.remove();
 				}
 			}
+
+		}
+
+		/**
+		 * Encapsulates *all* the snakes in a single BitSet object. For each snake, all
+		 * of its SnakePiece components are converted to two bytes, one for each
+		 * coordinate (row and column). Then these bytes are added at the end of the
+		 * BitSet.
+		 *
+		 * @return BitSet object containing all of the snakes
+		 */
+		private BitSet snakeListToBitSet()
+		{
+			List<Snake> snakes = game.getSnakes();
+
+			byte[] snakesPositions = new byte[2 * (SnakeConstants.STANDARD_BODY_SIZE + 1) * snakes.size()];
+			int cont = 0;
+			for(Snake s : snakes)
+			{
+				snakesPositions[cont++] = (byte) s.getHead().getRow();
+				snakesPositions[cont++] = (byte) s.getHead().getColumn();
+
+				for(SnakePiece b : s.getBody())
+				{
+					snakesPositions[cont++] = (byte) b.getRow();
+					snakesPositions[cont++] = (byte) b.getColumn();
+				}
+			}
+
+			return BitSet.valueOf(snakesPositions);
+		}
+
+		/**
+		 * Builds the byte array to be sent to a single client through socket.
+		 * 
+		 * For each snake, its leftmost bit in the BitSet will be the leftmost bit of
+		 * the row of its head. Since the board is 100x100, this bit is, at first, zero
+		 * for all the snakes because of the two-complement representation. It will be
+		 * set to 1 *only* to the current client's snake, so that the client's snake
+		 * differs from the others.
+		 *
+		 * @param message
+		 *            BitSet containing all of the snakes
+		 * @param posClient
+		 *            The position of the client's snake in the BitSet snakes order
+		 * @return the byte array that will be sent to that client
+		 */
+		private byte[] serializeBitSet(BitSet message, int posClient)
+		{
+			// each snake piece has 2 bytes (16 bits)
+			// MSB is a right
+			int bitChange = 16 * (SnakeConstants.STANDARD_BODY_SIZE + 1) * posClient + 7;
+
+			// sets the differing bit of the snake of this specific client
+			message.set(bitChange, true);
+
+			byte[] messageSerializated = message.toByteArray();
+
+			// The differing bit is set only in the coding of the BitSet to a byte array.
+			// After that, it must be re-set to 0.
+			message.set(bitChange, false);
+
+			return messageSerializated;
 		}
 	}
 }

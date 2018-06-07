@@ -8,6 +8,10 @@
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="10."/>
+			<item value="currentIds"/>
+			<item value="local"/>
+			<item value="system"/>
 			<item value="2000"/>
 			<item value="print"/>
 			<item value="ared"/>

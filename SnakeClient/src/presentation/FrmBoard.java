@@ -45,7 +45,7 @@ public class FrmBoard extends JFrame
 	 */
 	public FrmBoard(int height, int width)
 	{
-		this(height, width, 10);
+		this(height, width, 7);
 	}
 
 	/**
@@ -106,6 +106,7 @@ public class FrmBoard extends JFrame
 	public void setColorAt(int row, int column, Color color)
 	{
 		frmBoardPieces[row][column].setColor(color);
+		System.out.println("frmBoardPieces["+row+"]["+column+"].setColor("+color+")");
 	}
 
 	/*
@@ -133,4 +134,14 @@ public class FrmBoard extends JFrame
 			}
 		}
 	}
+
+	public FrmBoardPiece[][] getFrmBoardPieces() {
+		return frmBoardPieces;
+	}
+
+	public void setFrmBoardPieces(FrmBoardPiece[][] frmBoardPieces) {
+		this.frmBoardPieces = frmBoardPieces;
+	}
+	
+	
 }

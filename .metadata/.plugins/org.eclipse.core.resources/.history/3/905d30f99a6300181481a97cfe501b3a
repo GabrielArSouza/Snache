@@ -1,9 +1,0 @@
-package socket;
-
-public class ClientThread
-{
-	public void run()
-	{
-		
-	}
-}

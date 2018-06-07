@@ -12,4 +12,7 @@ public class GameConstants
 	
 	/** Color to be used in the board background */
 	public static final Color BACK_COLOR = Color.WHITE;
+	
+	/** Max connections */
+	public static final int MAX_NUMBER_SNAKES = 10;
 }

@@ -1,0 +1,69 @@
+
+e
+squid:S106\"9Replace this use of System.out or System.err by a logger.(úú¦ÍHÍRMAJORZ
+CODE_SMELL
+xsquid:CommentedOutCodeLine>"<This block of commented-out lines of code should be removed.(ĞÜˆÔHÇRMAJORZ
+CODE_SMELL
+esquid:S1135"2Complete the task associated to this TODO comment.(¹ÒÁş8·ˆ·Ï½,HŞRINFOZ
+CODE_SMELL
+j
+squid:S106]"9Replace this use of System.out or System.err by a logger.(Ùì¡ıÿÿÿÿHËRMAJORZ
+CODE_SMELL
+…squid:CommentedOutCodeLine¹"<This block of commented-out lines of code should be removed.(ó‹ÛÄùÿÿÿÿ8ìêæÕ½,H…"RMAJORZ
+CODE_SMELL
+d
+squid:S106v"9Replace this use of System.out or System.err by a logger.(ÀËÄ>HÌRMAJORZ
+CODE_SMELL
+csquid:S1135I"2Complete the task associated to this TODO comment.(ÕÌ®şÿÿÿÿHÏRINFOZ
+CODE_SMELL
+Ysquid:S1148É"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÕRMINORZVULNERABILITY
+Isquid:S2189Z""Add an end condition to this loop.(¤èÄ7HÅRBLOCKERZBUG
+k
+squid:S106ˆ"9Replace this use of System.out or System.err by a logger.(Î×ğùÿÿÿÿHÎRMAJORZ
+CODE_SMELL
+j
+squid:S106i"9Replace this use of System.out or System.err by a logger.(ûİºÿÿÿÿÿHÉRMAJORZ
+CODE_SMELL
+dsquid:S1135È"2Complete the task associated to this TODO comment.(ÕÌ®şÿÿÿÿHÑRINFOZ
+CODE_SMELL
+Xsquid:S1148J"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH×RMINORZVULNERABILITY
+dsquid:S1135¸"2Complete the task associated to this TODO comment.(Ä­©ÎüÿÿÿÿHĞRINFOZ
+CODE_SMELL
+Ysquid:S1148Ã"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÖRMINORZVULNERABILITY
+Tsquid:S1148—"#Use a logger to log this exception.(¹ÂíÕHØRMINORZVULNERABILITY
+xsquid:S2147Æ"ECombine this catch with the one at line 193, which has the same body.(¼ÔîàùÿÿÿÿHÓRMINORZ
+CODE_SMELL
+‹squid:S22933"YReplace the type specification in this constructor call with the diamond operator ("<>").(ì¸„ùÿÿÿÿHÆRMINORZ
+CODE_SMELL
+f
+squid:S106‚"9Replace this use of System.out or System.err by a logger.(å§ñÂHÊRMAJORZ
+CODE_SMELL
+rsquid:S2142Á"FEither re-interrupt this method or rethrow the "InterruptedException".(ÇâŞáøÿÿÿÿHÒRMAJORZBUG
+Ysquid:S1148‘"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÔRMINORZVULNERABILITY
+m
+squid:S106‰"9Replace this use of System.out or System.err by a logger.(úú¦Í8ûÆ§İ½,H¸"RMAJORZ
+CODE_SMELL
+r
+squid:S106°"9Replace this use of System.out or System.err by a logger.(ÜÔ€ñùÿÿÿÿ8ûÆ§İ½,H¹"RMAJORZ
+CODE_SMELL
+r
+squid:S106±"9Replace this use of System.out or System.err by a logger.(êÏ†şÿÿÿÿ8ûÆ§İ½,Hº"RMAJORZ
+CODE_SMELL
+m
+squid:S106º"9Replace this use of System.out or System.err by a logger.(²´²ü8ûÆ§İ½,H»"RMAJORZ
+CODE_SMELL
+r
+squid:S106»"9Replace this use of System.out or System.err by a logger.(ÜÔ€ñùÿÿÿÿ8ûÆ§İ½,H¼"RMAJORZ
+CODE_SMELL
+r
+squid:S106Õ"9Replace this use of System.out or System.err by a logger.(»å°ªüÿÿÿÿ8ûÆ§İ½,H½"RMAJORZ
+CODE_SMELL
+r
+squid:S106ş"9Replace this use of System.out or System.err by a logger.(ŸéÛæÿÿÿÿÿ8ûÆ§İ½,H¾"RMAJORZ
+CODE_SMELL
+m
+squid:S106„"9Replace this use of System.out or System.err by a logger.(éÜìü8ûÆ§İ½,H¿"RMAJORZ
+CODE_SMELL
+m
+squid:S106–"9Replace this use of System.out or System.err by a logger.(õİ”¢8ûÆ§İ½,HÀ"RMAJORZ
+CODE_SMELL

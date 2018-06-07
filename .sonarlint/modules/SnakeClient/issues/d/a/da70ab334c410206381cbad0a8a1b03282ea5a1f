@@ -1,0 +1,6 @@
+
+zsquid:MaximumInheritanceDepth
+"<This class has 6 parents which is greater than 5 authorized.(ñ¼ÿH˜"RMAJORZ
+CODE_SMELL
+lsquid:S1161(":Add the "@Override" annotation above this method signature(òÝ¬ýÿÿÿÿH—"RMAJORZ
+CODE_SMELL

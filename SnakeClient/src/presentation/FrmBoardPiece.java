@@ -41,7 +41,13 @@ public class FrmBoardPiece extends JButton
 	 */
 	public void setColor(Color background)
 	{
+		super.setBackground(background);
 		this.backgroundColor = background;
+	}
+	
+	public Color getColor ()
+	{
+		return this.backgroundColor;
 	}
 
 	/*

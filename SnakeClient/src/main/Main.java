@@ -1,6 +1,6 @@
 package main;
 
-import presentation.FrmBoard;
+import presentation.BoardFrame;
 import socket.SocketClient;
 
 /**
@@ -12,12 +12,14 @@ public class Main
 	 * The main method of the program.
 	 *
 	 * @param args the arguments passed in the game execution on terminal
+	 * @throws ClassNotFoundException 
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws ClassNotFoundException
 	{
-		FrmBoard frmBoard = new FrmBoard(20, 20);
-		frmBoard.setVisible(true);
-		SocketClient socketClient = new SocketClient();
-		socketClient.initSocket();
+		BoardFrame frm = new BoardFrame(50, 50, 10);
+		frm.setVisible(true);
+		SocketClient socketClient = new SocketClient(frm);
+		socketClient.init();
+		
 	}
 }

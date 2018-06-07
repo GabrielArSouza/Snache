@@ -1,6 +1,0 @@
-package controller;
-
-public class GameConstants
-{
-	public static final int GAME_LATENCY = 200;
-}

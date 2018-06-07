@@ -1,6 +1,7 @@
 package presentation;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import controller.GameConstants;
 
@@ -8,8 +9,11 @@ import controller.GameConstants;
  * Server's version of the board UI. It's just a wrapper for the board matrix
  * UI, and will be sent to the players through sockets.
  */
-public class BoardPieceMatrix
+public class BoardPieceMatrix implements Serializable
 {
+	/** ID for serialization purposes */
+	private static final long serialVersionUID = 1118830666788146452L;
+
 	/** The UI pieces of the board. */
 	private FrmBoardPiece frmBoardPieces[][];
 
@@ -115,4 +119,26 @@ public class BoardPieceMatrix
 
 		return res;
 	}
+
+	/**
+	 * Getters and Setters Methods
+	 */
+	
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	
+	
 }
