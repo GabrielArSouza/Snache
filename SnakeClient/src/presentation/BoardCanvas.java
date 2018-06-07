@@ -58,7 +58,5 @@ public class BoardCanvas extends Canvas
 				colorMatrix[i][j] = GameConstants.BACKGROUND_COLOR;
 			}
 		}
-		
-		super.repaint();
 	}
 }

@@ -231,7 +231,6 @@ public class Game
 			EnumSnakeDirection oldDir = snake.getDirection();
 
 			// Direction set by the user
-			System.out.println("snakeSharedDirections.get(" + snake + ") = " + snakeSharedDirections.get(snake));
 			EnumSnakeDirection newDir = snakeSharedDirections.get(snake).consume();
 
 			// Valid direction changes

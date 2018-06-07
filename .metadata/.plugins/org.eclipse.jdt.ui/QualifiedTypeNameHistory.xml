@@ -5,7 +5,6 @@
 <fullyQualifiedTypeName name="controller.BoardController"/>
 <fullyQualifiedTypeName name="presentation.FrmBoard"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="domain.SnakeConstants"/>
 <fullyQualifiedTypeName name="domain.BoardPiece"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="presentation.BoardPieceMatrix"/>
@@ -24,9 +23,14 @@
 <fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="controller.SharedSnakeDirection"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
-<fullyQualifiedTypeName name="controller.GameConstants"/>
 <fullyQualifiedTypeName name="controller.EnumSnakeDirection"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.net.InetAddress"/>
 <fullyQualifiedTypeName name="socket.ClientInfo"/>
+<fullyQualifiedTypeName name="java.awt.Canvas"/>
+<fullyQualifiedTypeName name="java.awt.Graphics"/>
+<fullyQualifiedTypeName name="domain.SnakeConstants"/>
+<fullyQualifiedTypeName name="controller.GameConstants"/>
+<fullyQualifiedTypeName name="io.UserInput"/>
+<fullyQualifiedTypeName name="java.awt.Color"/>
 </qualifiedTypeNameHistroy>

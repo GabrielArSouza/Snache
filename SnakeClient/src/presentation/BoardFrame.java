@@ -1,6 +1,7 @@
 package presentation;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
@@ -13,12 +14,12 @@ public class BoardFrame extends JFrame
 	
 	private BoardCanvas canvas;
 
-	public BoardFrame()
+	public BoardFrame(int nRows, int nColumns, int squareSize)
 	{
-		canvas = new BoardCanvas(50, 50, 10);
+		canvas = new BoardCanvas(nRows, nColumns, squareSize);
 		super.add(canvas);  
 		super.setLayout(null);  
-		super.setSize(500, 500);  
+		this.setPreferredSize(new Dimension(nRows * squareSize, nColumns * squareSize));
 		this.addKeyListener(new UserInput());
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setFocusable(true);
@@ -41,5 +42,8 @@ public class BoardFrame extends JFrame
 		return true;
 	}
 	
-	
+	public void clearBoard()
+	{
+		canvas.clearCanvas();
+	}
 }

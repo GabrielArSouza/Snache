@@ -92,6 +92,8 @@ public class SocketServerSnake
 			// continuously listens to new data on the socket
 			while(true)
 			{
+				System.out.println("-----------------------------------------------------");
+				System.out.println("while(true) on receiveFromClients()");
 				// packet that will be sent by one player
 				DatagramPacket packFromClient = new DatagramPacket(dataBuffFromClient, dataBuffFromClient.length);
 				socket.receive(packFromClient);
@@ -101,6 +103,7 @@ public class SocketServerSnake
 
 				// player who sent the data
 				InetAddress clientIP = packFromClient.getAddress();
+				
 				ClientInfo clientInfo = clientInfos.get(clientIP);
 
 				portClient = packFromClient.getPort();
@@ -132,6 +135,9 @@ public class SocketServerSnake
 				{
 					clientInfo.updateDirection(snakeDirectionFromClient);
 				}
+				
+				System.out.println("endwhile receive()");
+				System.out.println("-----------------------------------------------------");
 			}
 
 		}
@@ -170,6 +176,8 @@ public class SocketServerSnake
 			{
 				while(true)
 				{
+					System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
+					System.out.println("while(true) on update");
 					// the updates occur every GAME_LATENCY milliseconds
 					Thread.sleep(GameConstants.GAME_LATENCY);
 
@@ -178,6 +186,9 @@ public class SocketServerSnake
 					// prints the board on the console
 					// TODO remove this call; it's used only for debug purposes
 					//game.printBoardMatrix();
+					System.out.println("endwhile update()");
+					System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
+					
 				}
 
 			}
@@ -272,6 +283,7 @@ public class SocketServerSnake
 					entryIterator.remove();
 				}
 			}
+			
 		}
 
 		/**

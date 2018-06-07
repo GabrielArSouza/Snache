@@ -178,6 +178,7 @@ public class SocketClient
 		private void decodeMessageAndUpdateBoard ( byte[] message, int realSize )
 		{
 			System.out.println("Decodificando...");
+			frmClient.clearBoard();
 			
 			int posColumn = 0;
 			int posRow = 0;

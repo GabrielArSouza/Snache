@@ -106,7 +106,11 @@ public class ClientInfo
 		{
 			System.out.println("updating palyer's snake direction to " + direction + "...");
 			directionUpdated = true;
-			sharedSnakeDirection.produce(direction);
+			
+			synchronized(sharedSnakeDirection)
+			{
+				sharedSnakeDirection.produce(direction);
+			}
 		}
 
 	}
