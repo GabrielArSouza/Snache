@@ -1,23 +1,17 @@
 package socket;
 
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.BitSet;
 
-import controller.EnumSnakeDirection;
 import controller.GameConstants;
 import controller.SingletonSnakeDirectionChange;
 import domain.SnakeConstants;
-import presentation.FrmBoard;
-import presentation.FrmBoardPiece;
+import presentation.BoardFrame;
 
 
 /**
@@ -34,14 +28,14 @@ public class SocketClient
 	/** Singleton instance whose snake direction changes will be caught of. */
 	private SingletonSnakeDirectionChange snakeDirection = SingletonSnakeDirectionChange.getInstance();
 	
-	private FrmBoard boardClient;
+	private BoardFrame frmClient;
 	/**
 	 * Initializes the socket and calls its main method.
 	 * @throws ClassNotFoundException 
 	 */
-	public void initSocket( FrmBoard boardClient ) throws ClassNotFoundException
+	public void initSocket( BoardFrame boardClient ) throws ClassNotFoundException
 	{
-		this.boardClient = boardClient;
+		this.frmClient = boardClient;
 	
 		/**
 		 * Create Thread for update client direction 
@@ -183,9 +177,6 @@ public class SocketClient
 
 		private void decodeMessageAndUpdateBoard ( byte[] message, int realSize )
 		{
-			// first, clear the current board
-			boardClient.clearBoard();
-			
 			System.out.println("Decodificando...");
 			
 			int posColumn = 0;
@@ -230,11 +221,13 @@ public class SocketClient
 				{
 					// A number between 0 and 127
 					posColumn = Byte.toUnsignedInt(message[i]);
-					boardClient.setColorAt(posRow, posColumn, colorInPieceBord);
+					frmClient.setColorAt(posRow, posColumn, colorInPieceBord);
 					System.out.println(posRow + " " + posColumn);
 					
 				}
 			}
+			
+			frmClient.repaintCanvas();
 				
 		}
 	}

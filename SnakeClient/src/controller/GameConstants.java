@@ -18,4 +18,6 @@ public class GameConstants
 	
 	/** Enemy snake color */
 	public static final Color ENEMY_SNAKE_COLOR = Color.BLACK;
+	
+	public static final Color BACKGROUND_COLOR = Color.WHITE;
 }
