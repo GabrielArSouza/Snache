@@ -15,6 +15,7 @@ import java.util.BitSet;
 import controller.EnumSnakeDirection;
 import controller.GameConstants;
 import controller.SingletonSnakeDirectionChange;
+import domain.SnakeConstants;
 import presentation.FrmBoard;
 import presentation.FrmBoardPiece;
 
@@ -148,8 +149,10 @@ public class SocketClient
 			try 
 			{
 				// The data sent by server has a serialized object board matrix
-				// Estimated size: 100 bytes
-				byte[] dataBuffFromServer = new byte[100];
+				// Estimated size
+				int maxSizeMessage = 2 * (SnakeConstants.STANDARD_BODY_SIZE+1) * GameConstants.MAX_NUMBER_SNAKES;
+				
+				byte[] dataBuffFromServer = new byte[maxSizeMessage];
 				
 				// packet that will be sent by server
 				DatagramPacket packFromServer = new DatagramPacket(dataBuffFromServer, dataBuffFromServer.length);
@@ -158,7 +161,7 @@ public class SocketClient
 				socket.receive(packFromServer);
 				
 				System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
-				this.decodeMessage(packFromServer.getData());
+				this.decodeMessage(packFromServer.getData(), packFromServer.getLength());
 			
 			}
 			catch (SocketException e)
@@ -174,9 +177,10 @@ public class SocketClient
 			}
 		}
 		
-		private void decodeMessage ( byte[] message )
+		private void decodeMessage ( byte[] message, int realSize )
 		{
 			System.out.println("Decodificando...");
+			System.out.println("Pacote de " + message.length + " bytes");
 			boardClient.clearBoard();
 			
 			int posColumn = 0;
@@ -190,43 +194,37 @@ public class SocketClient
 			 */
 			boolean flagIsClientSanke = false;
 			Color colorInPieceBord;
-			for (int i=0; i < message.length; i++)
+			int cont = 0;
+			for (int i=0; i < realSize; i++)
 			{
 				// For each snake, verify that it belongs to the client
 				if (i%20 == 0)
 				{
 					// verify if first bit is setting in 1
-					if ( (message[i] & (1 << 0)) != 0 )
+					if ( (message[i] & (1 << 7)) != 0 )
 					{
 						flagIsClientSanke = true;
-						
-						// transform a byte in a correct byte
-						BitSet newByte = new BitSet();
-						newByte.set(0, 0);
-						
-						for (int j=1; j < 8; j++)
-							newByte.set(j, (message[i] & (1 << j)) != 0 );
-						
-						message[i] = newByte.toByteArray()[0];
- 					}
-					else flagIsClientSanke = false;
+						// unset a MSB
+						message[i] &= ((1 << 7)-1);					
+ 					
+					}else flagIsClientSanke = false;
 				}
 				
 				// Define snake's color
 				if (flagIsClientSanke)
-					colorInPieceBord = Color.GREEN;
+					colorInPieceBord = GameConstants.CLIENT_SNAKE_COLOR;
 				else 
-					colorInPieceBord = Color.BLACK;
+					colorInPieceBord = GameConstants.ENEMY_SNAKE_COLOR;
 							
 				if (i%2 == 0)
 				{
 					// A number between 0 and 127
-					posColumn = Byte.toUnsignedInt(message[i]);
+					posRow = Byte.toUnsignedInt(message[i]);
 				}
 				else 
 				{
 					// A number between 0 and 127
-					posRow = Byte.toUnsignedInt(message[i]);
+					posColumn = Byte.toUnsignedInt(message[i]);
 					boardClient.setColorAt(posRow, posColumn, colorInPieceBord);
 					System.out.println(posRow + " " + posColumn);
 					

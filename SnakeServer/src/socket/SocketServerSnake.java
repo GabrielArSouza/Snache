@@ -310,7 +310,8 @@ public class SocketServerSnake
 		private byte[] serializeBitSet(BitSet message, int posClient)
 		{
 			// each snake piece has 2 bytes (16 bits)
-			int bitChange = 16 * (SnakeConstants.STANDARD_BODY_SIZE + 1) * posClient;
+			// MSB is a right
+			int bitChange = 16 * (SnakeConstants.STANDARD_BODY_SIZE + 1) * posClient + 7;
 
 			// sets the differing bit of the snake of this specific client
 			message.set(bitChange, true);
@@ -320,7 +321,7 @@ public class SocketServerSnake
 			// The differing bit is set only in the coding of the BitSet to a byte array.
 			// After that, it must be re-set to 0.
 			message.set(bitChange, false);
-
+			
 			return messageSerializated;
 		}
 	}
