@@ -1,0 +1,41 @@
+
+e
+squid:S106t"9Replace this use of System.out or System.err by a logger.(ÒÜİùHûRMAJORZ
+CODE_SMELL
+f
+squid:S106À"9Replace this use of System.out or System.err by a logger.(æªå¬HüRMAJORZ
+CODE_SMELL
+f
+squid:S106œ"9Replace this use of System.out or System.err by a logger.(ÃÌĞçHÿRMAJORZ
+CODE_SMELL
+Ysquid:S1148²"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH™ RMINORZVULNERABILITY
+e
+squid:S106™"9Replace this use of System.out or System.err by a logger.(Ã’ HşRMAJORZ
+CODE_SMELL
+Ysquid:S1148‚"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH“ RMINORZVULNERABILITY
+xsquid:S2147…"ECombine this catch with the one at line 127, which has the same body.(É˜ÙúÿÿÿÿHŠ RMINORZ
+CODE_SMELL
+Xsquid:S1148O"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH• RMINORZVULNERABILITY
+dsquid:S1135"2Complete the task associated to this TODO comment.(ÕÌ®şÿÿÿÿH€ RINFOZ
+CODE_SMELL
+Xsquid:S1148U"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH˜ RMINORZVULNERABILITY
+l
+squid:S106N"9Replace this use of System.out or System.err by a logger.(ìåÕ—8ÍÉáĞ½,H…!RMAJORZ
+CODE_SMELL
+jsquid:S3034Õ">Prevent "int" promotion by adding "& 0xff" to this expression.(ÏæğÒûÿÿÿÿHöRMAJORZBUG
+dsquid:S1135‡"2Complete the task associated to this TODO comment.(ÕÌ®şÿÿÿÿH‚ RINFOZ
+CODE_SMELL
+Xsquid:S11489"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH– RMINORZVULNERABILITY
+Tsquid:S1148¸"#Use a logger to log this exception.(¹ÂíÕH— RMINORZVULNERABILITY
+csquid:S11358"2Complete the task associated to this TODO comment.(ÕÌ®şÿÿÿÿH† RINFOZ
+CODE_SMELL
+f
+squid:S106©"9Replace this use of System.out or System.err by a logger.(¯ÆHıRMAJORZ
+CODE_SMELL
+csquid:S1135T"2Complete the task associated to this TODO comment.(ÕÌ®şÿÿÿÿH… RINFOZ
+CODE_SMELL
+Ysquid:S1148ˆ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH’ RMINORZVULNERABILITY
+ˆsquid:S2159¡"ZRemove this call to "equals"; comparisons between an array and a type always return false.(ÎœÀ8‘¼§İ½,Hµ"RMAJORZBUG
+r
+squid:S106î"9Replace this use of System.out or System.err by a logger.(óÛÈüÿÿÿÿ8‘¼§İ½,H¶"RMAJORZ
+CODE_SMELL

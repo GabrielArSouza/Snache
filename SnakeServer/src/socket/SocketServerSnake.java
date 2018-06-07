@@ -223,7 +223,7 @@ public class SocketServerSnake
 
 			// Iterates over the players and send the board to them.
 			Iterator<Map.Entry<InetAddress, ClientInfo>> entryIterator = clientInfos.entrySet().iterator();
-
+			
 			while(entryIterator.hasNext())
 			{
 				Map.Entry<InetAddress, ClientInfo> entry = entryIterator.next();

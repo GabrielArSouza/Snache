@@ -215,7 +215,7 @@ public class Game
 		Map<Snake, Integer> moveTimes = new HashMap<Snake, Integer>();
 		
 		// shuffles the snake list to *try* to be fair with the players
-		Collections.shuffle(snakes);
+		//Collections.shuffle(snakes);
 
 		// using iterator so that we can delete snakes while iterating the snake list
 		ListIterator<Snake> snakeIterator = snakes.listIterator();
@@ -230,6 +230,7 @@ public class Game
 			// Current snake direction
 			EnumSnakeDirection oldDir = snake.getDirection();
 
+			System.out.println(snake);
 			// Direction set by the user
 			EnumSnakeDirection newDir = snakeSharedDirections.get(snake).consume();
 
@@ -279,6 +280,7 @@ public class Game
 			{
 				killMovedSnake(snake);
 				snakeIterator.remove();
+				System.out.println("Tentou remover");
 			}
 			
 			// records the time at which this snake moved 

@@ -1,0 +1,3 @@
+
+Ç%squid:RedundantThrowsDeclarationCheck"yRemove the declaration of thrown exception 'java.lang.ClassNotFoundException', as it cannot be thrown from method's body.(ÈðÖ¾8ìÆ§Ý½,H·"RMINORZ
+CODE_SMELL
