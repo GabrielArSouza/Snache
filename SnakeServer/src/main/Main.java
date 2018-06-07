@@ -17,8 +17,8 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		BoardPieceMatrix boardPieceMatrix = new BoardPieceMatrix(20, 20);
-		Board board = new Board(20, 20);
+		BoardPieceMatrix boardPieceMatrix = new BoardPieceMatrix(100, 100);
+		Board board = new Board(50, 50);
 		Game game = new Game(boardPieceMatrix, board);
 		SocketServerSnake socketServer = new SocketServerSnake(game);
 		socketServer.initSocket();

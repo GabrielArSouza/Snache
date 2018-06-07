@@ -8,7 +8,7 @@ import java.awt.Color;
 public class GameConstants
 {
 	/** Time between two updates of the board. */
-	public static final int GAME_LATENCY = 600;
+	public static final int GAME_LATENCY = 200;
 	
 	/** Max connections */
 	public static final int MAX_NUMBER_SNAKES = 10;

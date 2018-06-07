@@ -106,6 +106,7 @@ public class FrmBoard extends JFrame
 	public void setColorAt(int row, int column, Color color)
 	{
 		frmBoardPieces[row][column].setColor(color);
+		System.out.println("frmBoardPieces["+row+"]["+column+"].setColor("+color+")");
 	}
 
 	/*

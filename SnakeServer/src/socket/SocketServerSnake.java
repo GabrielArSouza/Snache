@@ -177,7 +177,7 @@ public class SocketServerSnake
 
 					// prints the board on the console
 					// TODO remove this call; it's used only for debug purposes
-					game.printBoardMatrix();
+					//game.printBoardMatrix();
 				}
 
 			}
@@ -214,19 +214,30 @@ public class SocketServerSnake
 			BitSet message = this.snakeListToBitSet();
 
 			// Iterates over the players and send the board to them.
-			for(Map.Entry<InetAddress, ClientInfo> entry : clientInfos.entrySet())
+			Iterator<Map.Entry<InetAddress, ClientInfo>> entryIterator = clientInfos.entrySet().iterator();
+			
+			while(entryIterator.hasNext())
 			{
+				Map.Entry<InetAddress, ClientInfo> entry = entryIterator.next();
 				ClientInfo client = entry.getValue();
+				Snake snake = client.getSnake();
 
 				// sets the "updateDirection" attribute of the player to false so that the next
 				// game iteration will consume the commands sent by him/her
 				client.setDirectionUpdated(false);
 
 				// position of the client's snake in the snake list of the game
-				int posOfClientSnake = snakePositions.get(client.getSnake());
+				Object posOfClientSnake = snakePositions.get(snake);
+				
+				// client's snake has died
+				if(posOfClientSnake == null)
+				{
+					entryIterator.remove();
+					continue;
+				}
 
 				// builds the byte array that will be sent through socket
-				byte[] dataToSend = this.serializeBitSet(message, posOfClientSnake);
+				byte[] dataToSend = this.serializeBitSet(message, (int)posOfClientSnake);
 
 				// builds the package to be sent to the user
 				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),

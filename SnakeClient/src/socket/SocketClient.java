@@ -161,7 +161,11 @@ public class SocketClient
 				socket.receive(packFromServer);
 				
 				System.out.println("Recebeu Pacote de " + packFromServer.getLength() + " bytes do server");
-				this.decodeMessage(packFromServer.getData(), packFromServer.getLength());
+				
+				long startTime = System.nanoTime();  
+				// decodes the message sent by the server and updates the board
+				this.decodeMessageAndUpdateBoard(packFromServer.getData(), packFromServer.getLength());
+				System.out.println("ellapsed time (ms): "+ (System.nanoTime() - startTime)/1000000);
 			
 			}
 			catch (SocketException e)
@@ -176,12 +180,13 @@ public class SocketClient
 				i.printStackTrace();
 			}
 		}
-		
-		private void decodeMessage ( byte[] message, int realSize )
+
+		private void decodeMessageAndUpdateBoard ( byte[] message, int realSize )
 		{
-			System.out.println("Decodificando...");
-			System.out.println("Pacote de " + message.length + " bytes");
+			// first, clear the current board
 			boardClient.clearBoard();
+			
+			System.out.println("Decodificando...");
 			
 			int posColumn = 0;
 			int posRow = 0;

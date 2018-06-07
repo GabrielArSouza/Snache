@@ -24,9 +24,9 @@
 <fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="controller.SharedSnakeDirection"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
+<fullyQualifiedTypeName name="controller.GameConstants"/>
+<fullyQualifiedTypeName name="controller.EnumSnakeDirection"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.net.InetAddress"/>
 <fullyQualifiedTypeName name="socket.ClientInfo"/>
-<fullyQualifiedTypeName name="controller.GameConstants"/>
-<fullyQualifiedTypeName name="controller.EnumSnakeDirection"/>
 </qualifiedTypeNameHistroy>
