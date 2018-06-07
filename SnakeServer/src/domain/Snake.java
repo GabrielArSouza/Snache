@@ -74,6 +74,11 @@ public class Snake
 			this.direction = initialDirection;
 		}
 	}
+	
+	public long getId()
+	{
+		return id;
+	}
 
 	/**
 	 * Moves the snake. It moves the head to a new position. Then, shifts all the

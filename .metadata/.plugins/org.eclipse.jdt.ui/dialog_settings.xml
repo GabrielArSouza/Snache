@@ -73,6 +73,18 @@
 		<item value="360" key="DIALOG_X_ORIGIN"/>
 		<item value="0" key="DIALOG_Y_ORIGIN"/>
 	</section>
+	<section name="org.eclipse.jdt.internal.ui.dialogs.OpenTypeSelectionDialog2">
+		<item value="true" key="ShowStatusLine"/>
+		<item value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#x0A;&lt;History/&gt;" key="History"/>
+		<item value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#x0A;&lt;workingSet workingSetName=&quot;&quot;/&gt;" key="WorkingSet"/>
+		<section name="DialogBoundsSettings">
+			<item value="600" key="DIALOG_WIDTH"/>
+			<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
+			<item value="500" key="DIALOG_HEIGHT"/>
+			<item value="384" key="DIALOG_X_ORIGIN"/>
+			<item value="38" key="DIALOG_Y_ORIGIN"/>
+		</section>
+	</section>
 	<section name="org.eclipse.jdt.internal.ui.text.QuickOutline">
 		<item value="true" key="org.eclipse.jdt.internal.ui.text.JavaOutlineInformationControlDIALOG_USE_PERSISTED_SIZE"/>
 		<item value="400" key="org.eclipse.jdt.internal.ui.text.JavaOutlineInformationControlDIALOG_WIDTH"/>
@@ -87,17 +99,15 @@
 	<section name="CallHierarchySearchScope">
 	</section>
 	<section name="FatJarPackageWizard">
-		<item value="/home/josenaldo/Dropbox/UFRN/BTI/Disciplinas/2018.1/PSO_edgard_julio/trabs/trab2.2/SnakeServer.xml" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
+		<item value="/home/josenaldo/Dropbox/UFRN/BTI/Disciplinas/2018.1/PSO_edgard_julio/trabs/trab2.2/SnakeServer" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="Main (1) - SnakeClient" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
-		<item value="/home/gabriel/Códigos/Java/snake.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="/home/josenaldo/Desktop/Untitled.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
-			<item value="/home/gabriel/Códigos/Java/snake.jar"/>
 			<item value="/home/josenaldo/Desktop/Untitled.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
-			<item value="/home/josenaldo/Dropbox/UFRN/BTI/Disciplinas/2018.1/PSO_edgard_julio/trabs/trab2.2/SnakeServer.xml"/>
 			<item value="/home/josenaldo/Dropbox/UFRN/BTI/Disciplinas/2018.1/PSO_edgard_julio/trabs/trab2.2/SnakeServer"/>
 			<item value=".xml"/>
 		</list>

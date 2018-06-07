@@ -2,7 +2,6 @@ package main;
 
 import controller.Game;
 import domain.Board;
-import presentation.BoardPieceMatrix;
 import socket.SocketServerSnake;
 
 /**
@@ -17,9 +16,8 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		BoardPieceMatrix boardPieceMatrix = new BoardPieceMatrix(100, 100);
 		Board board = new Board(50, 50);
-		Game game = new Game(boardPieceMatrix, board);
+		Game game = new Game(board);
 		SocketServerSnake socketServer = new SocketServerSnake(game);
 		socketServer.initSocket();
 	}

@@ -1,15 +1,12 @@
 package controller;
 
-import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.Stack;
 import java.util.TreeSet;
 
 import domain.Board;
@@ -17,7 +14,7 @@ import domain.BoardPiece;
 import domain.Snake;
 import domain.SnakeConstants;
 import domain.SnakePiece;
-import presentation.BoardPieceMatrix;
+import socket.ClientInfo;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -30,23 +27,13 @@ public class Game
 	/** The ids of the active snakes on the board. */
 	private SortedSet<Long> currentIds;
 
-	/** Reference to the board UI. */
-	private BoardPieceMatrix boardMatrix;
-
 	/** Reference to the board logic object. */
 	private Board board;
-
-	/** Colors that can be used in new snakes. */
-	private Stack<Color> availableColors;
-
+	
 	/** Current snakes in the board. */
 	private List<Snake> snakes;
 
-	/** Colors assigned to the current snakes. */
-	private Map<Snake, Color> snakeColors;
-
-	/** Direction changers assigned to the current snakes. */
-	private Map<Snake, SharedSnakeDirection> snakeSharedDirections;
+	private Map<Snake, ClientInfo> snakeClients;
 
 	/**
 	 * Instantiates a new game object.
@@ -56,63 +43,12 @@ public class Game
 	 * @param board
 	 *            the logic board
 	 */
-	public Game(BoardPieceMatrix boardMatrix, Board board)
+	public Game(Board board)
 	{
-		this.boardMatrix = boardMatrix;
 		this.board = board;
 		this.snakes = new ArrayList<Snake>();
-		this.snakeColors = new HashMap<Snake, Color>();
-		this.snakeSharedDirections = new HashMap<Snake, SharedSnakeDirection>();
-		this.availableColors = new Stack<Color>();
+		this.snakeClients = new HashMap<Snake, ClientInfo>();
 		this.currentIds = new TreeSet<Long>();
-		resetAvailableColors();
-	}
-
-	/**
-	 * Resets the stack of available colors. It shuffles the array of all possible
-	 * colors and put the colors on a stack.
-	 */
-	private void resetAvailableColors()
-	{
-		List<Color> allColors = Arrays.asList(SnakeConstants.COLORS);
-		Collections.shuffle(allColors);
-		availableColors.addAll(allColors);
-	}
-
-	/**
-	 * Gets an available color from the stack of colors.
-	 *
-	 * @return the top color on the stack of colors.
-	 */
-	private Color getAvailableColor()
-	{
-		Color color = availableColors.pop();
-
-		if(availableColors.empty())
-			resetAvailableColors();
-
-		return color;
-	}
-
-	/**
-	 * Draw snakes. It clears the board first and then paint all the current snakes.
-	 */
-	public void drawSnakes()
-	{
-		boardMatrix.clearBoard();
-
-		for(Snake snake : snakes)
-		{
-			SnakePiece head = snake.getHead();
-			Color color = snakeColors.get(snake);
-
-			boardMatrix.setColorAt(head.getRow(), head.getColumn(), color);
-
-			for(SnakePiece piece : snake.getBody())
-			{
-				boardMatrix.setColorAt(piece.getRow(), piece.getColumn(), color);
-			}
-		}
 	}
 
 	/**
@@ -122,7 +58,7 @@ public class Game
 	 *            direction changer associated to the new snake
 	 * @return the snake created, or null if the creation wasn't possible
 	 */
-	public Snake createSnake(SharedSnakeDirection sharedDirection)
+	public Snake createSnake(ClientInfo client)
 	{
 		EnumSnakeDirection direction = null;
 		SnakePiece headPiece = null;
@@ -188,14 +124,14 @@ public class Game
 			return null;
 		}
 
-		System.out.println("snake created: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
+		long id = nextAvailableId();
+		System.out.println("snake " + id + " created: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
 
 		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction,
-				nextAvailableId());
-		Color color = getAvailableColor();
+				id);
 
-		snakeSharedDirections.put(snake, sharedDirection);
-		snakeColors.put(snake, color);
+		currentIds.add(id);
+		snakeClients.put(snake, client);
 		snakes.add(snake);
 		fillSnakeOnBoard(snake);
 
@@ -211,28 +147,26 @@ public class Game
 	 */
 	public Map<Snake, Integer> moveSnakes()
 	{
-		// times in which the snakes moved 
-		Map<Snake, Integer> moveTimes = new HashMap<Snake, Integer>();
+		Map<Snake, Integer> posInTheSnakeList = new HashMap<Snake, Integer>();
 		
 		// shuffles the snake list to *try* to be fair with the players
-		//Collections.shuffle(snakes);
+		Collections.shuffle(snakes);
 
 		// using iterator so that we can delete snakes while iterating the snake list
 		ListIterator<Snake> snakeIterator = snakes.listIterator();
 		
-		// time in which the snakes will move at 
-		int moveTime = 0;
+		int pos = 0;
 
 		while(snakeIterator.hasNext())
 		{
 			Snake snake = snakeIterator.next();
+			posInTheSnakeList.put(snake, pos);
 
 			// Current snake direction
 			EnumSnakeDirection oldDir = snake.getDirection();
-
-			System.out.println(snake);
+			
 			// Direction set by the user
-			EnumSnakeDirection newDir = snakeSharedDirections.get(snake).consume();
+			EnumSnakeDirection newDir = snakeClients.get(snake).consumeDirection();
 
 			// Valid direction changes
 			if((newDir == EnumSnakeDirection.UP
@@ -272,22 +206,26 @@ public class Game
 			if(newHeadOnLimits && board.getBoardPiece(newHead.getRow(), newHead.getColumn()).isEmpty())
 			{
 				board.occupyBoardPiece(newHead);
+				++pos;
 			}
 
 			// the cell isn't empty or the new head doesn't respect the board edges: the
 			// snake dies!
 			else
 			{
+				if(!newHeadOnLimits)
+					System.out.println("killing the snake " + snake.getId() + " because it touched the board edges!");
+				
+				else
+					System.out.println("killing the snake " + snake.getId() + " because it touched another snake!");
+				
 				killMovedSnake(snake);
 				snakeIterator.remove();
-				System.out.println("Tentou remover");
+				posInTheSnakeList.remove(snake);
 			}
-			
-			// records the time at which this snake moved 
-			moveTimes.put(snake, moveTime++);
 		}
 		
-		return moveTimes;
+		return posInTheSnakeList;
 	}
 
 	/**
@@ -298,14 +236,14 @@ public class Game
 	 */
 	public void killInactiveSnake(Snake snake)
 	{
+		System.out.println("killing the inactive snake: " + snake);
 		board.freeBoardPiece(snake.getHead());
 
 		for(SnakePiece bodyPiece : snake.getBody())
 			board.freeBoardPiece(bodyPiece);
 
-		snakeColors.remove(snake);
-		snakeSharedDirections.remove(snake);
-
+		snakeClients.remove(snake);
+		currentIds.remove(snake.getId());
 		snakes.remove(snake);
 	}
 
@@ -324,8 +262,8 @@ public class Game
 		for(SnakePiece bodyPiece : snake.getBody())
 			board.freeBoardPiece(bodyPiece);
 
-		snakeColors.remove(snake);
-		snakeSharedDirections.remove(snake);
+		snakeClients.remove(snake);
+		currentIds.remove(snake.getId());
 	}
 
 	/**
@@ -342,14 +280,6 @@ public class Game
 		{
 			board.occupyBoardPiece(bodyPiece);
 		}
-	}
-
-	/**
-	 * Prints the board on the console.
-	 */
-	public void printBoardMatrix()
-	{
-		System.out.println(boardMatrix);
 	}
 
 	/**
@@ -383,16 +313,6 @@ public class Game
 
 			return currentId;
 		}
-	}
-
-	/**
-	 * Gets the board matrix game.
-	 *
-	 * @return the board matrix object
-	 */
-	public BoardPieceMatrix getBoardMatrix()
-	{
-		return this.boardMatrix;
 	}
 
 	/**

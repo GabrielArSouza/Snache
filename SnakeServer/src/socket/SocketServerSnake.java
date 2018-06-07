@@ -11,10 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import controller.EnumSnakeDirection;
 import controller.Game;
 import controller.GameConstants;
-import controller.SharedSnakeDirection;
 import domain.Snake;
 import domain.SnakeConstants;
 import domain.SnakePiece;
@@ -102,15 +100,23 @@ public class SocketServerSnake
 				// new client trying to connect
 				if(packFromClient.getLength() == 0)
 				{
+					ClientInfo clientInfo = new ClientInfo(packFromClient.getPort());
+					
 					System.out.println("client " + clientIP + " trying to connect");
-					SharedSnakeDirection sharedDirection = new SharedSnakeDirection(EnumSnakeDirection.SAME);
-
-					Snake snake = game.createSnake(sharedDirection);
+					
+					Snake snake = null;
+					
+					synchronized(game)
+					{
+						snake = game.createSnake(clientInfo);
+					}
+					
+					clientInfo.setSnake(snake);
 
 					if(snake != null)
 					{
-						ClientInfo clientInfo = new ClientInfo(sharedDirection, snake, packFromClient.getPort());
 						clientInfos.put(clientIP, clientInfo);
+						System.out.println("the client " + clientIP + " received the snake:" + snake.getId());
 					}
 
 					else
@@ -210,12 +216,16 @@ public class SocketServerSnake
 		 */
 		private void update() throws IOException
 		{
-			System.out.println("updating snakes...");
+			System.out.println("killing inactive snakes...");
 			killInactiveClients();
 
-			// moves and draws the snakes
-			Map<Snake, Integer> snakePositions = game.moveSnakes();
-			game.drawSnakes();
+			System.out.println("moving the snakes...");
+			Map<Snake, Integer> posInTheSnakeList = game.moveSnakes();
+			
+			for(Map.Entry<Snake, Integer> entry : posInTheSnakeList.entrySet())
+			{
+				System.out.println("cobra "+ entry.getKey().getId() + " esta na posicao " + entry.getValue());
+			}
 
 			// Message to be sent to the players. The snakes in this message are in the
 			// *same* order of the snake list in the Game object
@@ -224,26 +234,43 @@ public class SocketServerSnake
 			// Iterates over the players and send the board to them.
 			Iterator<Map.Entry<InetAddress, ClientInfo>> entryIterator = clientInfos.entrySet().iterator();
 			
+			System.out.println("sending the board to the clients...");
 			while(entryIterator.hasNext())
 			{
 				Map.Entry<InetAddress, ClientInfo> entry = entryIterator.next();
 				ClientInfo client = entry.getValue();
+				
+				// decreases the dead cont of that client
+				client.decreaseDeadCont();
+				
+				// the client reached the maximum number of connection tentatives
+				if(!client.isActive())
+				{
+					// removes the snake from the snake list
+					game.killInactiveSnake(client.getSnake());
+					
+					// removes the client from the client list
+					entryIterator.remove();
+					
+					System.out.println("removing the client " + entry.getKey() + " because of inactivity!");
+					continue;
+				}
+				
 				Snake snake = client.getSnake();
-
-				// sets the "updateDirection" attribute of the player to false so that the next
-				// game iteration will consume the commands sent by him/her
-				client.setDirectionUpdated(false);
-
-				// position of the client's snake in the snake list of the game
-				Object posOfClientSnake = snakePositions.get(snake);
-
-				// client's snake has died
+				System.out.println("sending to the client: " + entry.getKey() + " whose snake is: " + snake.getId());
+				
+				Object posOfClientSnake = posInTheSnakeList.get(snake);
+				
+				// the client's snake isn't in the snake list anymore: his/her snake died!
 				if(posOfClientSnake == null)
 				{
 					entryIterator.remove();
+					System.out.println("removing the client " + entry.getKey() + " because his/her snake died!");
 					continue;
 				}
-
+				
+				System.out.println("the position of the snake in the list is " + posOfClientSnake);
+				
 				// builds the byte array that will be sent through socket
 				byte[] dataToSend = this.serializeBitSet(message, (int) posOfClientSnake);
 

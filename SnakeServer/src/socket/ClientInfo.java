@@ -1,7 +1,6 @@
 package socket;
 
 import controller.EnumSnakeDirection;
-import controller.SharedSnakeDirection;
 import domain.Snake;
 
 /**
@@ -21,18 +20,7 @@ public class ClientInfo
 	 */
 	private int deadCont;
 
-	/**
-	 * The EnumSnakeDirection wrapper that will be used to move the player's snake.
-	 */
-	private SharedSnakeDirection sharedSnakeDirection;
-
-	/**
-	 * True if the game updated the direction of the player's snake based on the
-	 * command sent by the player, false otherwise. This flag is used to update the
-	 * player's snake only one time per time step, even if multiple commands were
-	 * sent to the server.
-	 */
-	private boolean directionUpdated;
+	private EnumSnakeDirection newDirection;
 
 	/** The player's snake. */
 	private Snake snake;
@@ -47,13 +35,23 @@ public class ClientInfo
 	 * @param snake
 	 *            the snake
 	 */
-	public ClientInfo(SharedSnakeDirection sharedSnakeDirection, Snake snake, int port)
+	public ClientInfo(int port)
 	{
-		this.sharedSnakeDirection = sharedSnakeDirection;
+		this.newDirection = null;
 		deadCont = MAX_ITERATIONS;
-		directionUpdated = false;
-		this.snake = snake;
 		this.port = port;
+	}
+	
+	public void setSnake(Snake snake)
+	{
+		this.snake = snake;
+	}
+	
+	public EnumSnakeDirection consumeDirection()
+	{
+		EnumSnakeDirection dir = newDirection;
+		newDirection = null;
+		return dir;
 	}
 	
 	public int getPort()
@@ -103,35 +101,18 @@ public class ClientInfo
 	 */
 	public void updateDirection(String direction)
 	{
-		deadCont = MAX_ITERATIONS;
-
-		if(direction.equals(EnumSnakeDirection.SAME.toString()) || directionUpdated)
+		// it has a direction already
+		if(newDirection != null && newDirection != EnumSnakeDirection.SAME) 
 		{
 			return;
 		}
 
 		else
 		{
-			System.out.println("updating palyer's snake direction to " + direction + "...");
-			directionUpdated = true;
-			
-			synchronized(sharedSnakeDirection)
-			{
-				sharedSnakeDirection.produce(direction);
-			}
+			deadCont = MAX_ITERATIONS;
+			System.out.println("updating player's snake direction to " + direction + "...");
+			newDirection = EnumSnakeDirection.getValue(direction);
 		}
 
-	}
-
-	/**
-	 * Sets if the player's snake direction was updated already.
-	 *
-	 * @param directionUpdated
-	 *            true if the direction of the player's snake was updated, false
-	 *            otherwise
-	 */
-	public void setDirectionUpdated(boolean directionUpdated)
-	{
-		this.directionUpdated = directionUpdated;
 	}
 }
