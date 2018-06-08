@@ -73,6 +73,18 @@ public class SocketServerSnake
 			e.printStackTrace();
 		}
 	}
+	
+	public void killSnake(InetAddress clientIP)
+	{
+		System.out.println("tring to kill the snake of the client " + clientIP.getHostAddress());
+		
+		synchronized (clientInfos) {
+			ClientInfo client = clientInfos.get(clientIP);
+			game.killInactiveSnake(client.getSnake());
+			clientInfos.remove(clientIP);
+			serverFrm.removeClient(clientIP);
+		}
+	}
 
 	/**
 	 * Receive data from the players.
@@ -232,66 +244,70 @@ public class SocketServerSnake
 			Iterator<Map.Entry<InetAddress, ClientInfo>> entryIterator = clientInfos.entrySet().iterator();
 			
 			serverFrm.clearBoard();
-			
-			System.out.println("sending the board to the clients...");
-			while(entryIterator.hasNext())
+			synchronized (clientInfos)
 			{
-				Map.Entry<InetAddress, ClientInfo> entry = entryIterator.next();
-				ClientInfo client = entry.getValue();
+				System.out.println("sending the board to the clients...");
 				
-				// decreases the dead cont of that client
-				client.decreaseDeadCont();
-				
-				// the client reached the maximum number of connection tentatives
-				if(!client.isActive())
+				while(entryIterator.hasNext())
 				{
-					// removes the snake from the snake list
-					game.killInactiveSnake(client.getSnake());
+					Map.Entry<InetAddress, ClientInfo> entry = entryIterator.next();
+					ClientInfo client = entry.getValue();
+					
+					// decreases the dead cont of that client
+					client.decreaseDeadCont();
+					
+					// the client reached the maximum number of connection tentatives
+					if(!client.isActive())
+					{
+						// removes the snake from the snake list
+						game.killInactiveSnake(client.getSnake());
+							
+						serverFrm.removeClient(entry.getKey());
 						
-					serverFrm.removeClient(entry.getKey());
+						serverFrm.removeClient(entry.getKey());
+						
+						// removes the client from the client list
+						entryIterator.remove();
+						
+						System.out.println("removing the client " + entry.getKey() + " because of inactivity!");
+						continue;
+					}
 					
-					serverFrm.removeClient(entry.getKey());
+					Snake snake = client.getSnake();
+					System.out.println("sending to the client: " + entry.getKey() + " whose snake is: " + snake.getId());
 					
-					// removes the client from the client list
-					entryIterator.remove();
+					Object posOfClientSnake = posInTheSnakeList.get(snake);
 					
-					System.out.println("removing the client " + entry.getKey() + " because of inactivity!");
-					continue;
+					// the client's snake isn't in the snake list anymore: his/her snake died!
+					if(posOfClientSnake == null)
+					{
+						serverFrm.removeClient(entry.getKey());
+						entryIterator.remove();
+						System.out.println("removing the client " + entry.getKey() + " because his/her snake died!");
+						continue;
+					}
+					
+					System.out.println("the position of the snake in the list is " + posOfClientSnake);
+					
+					serverFrm.drawSnake(snake, game.getSnakeColor(snake));
+					
+					// builds the byte array that will be sent through socket
+					byte[] dataToSend = this.serializeBitSet(message, (int) posOfClientSnake);
+
+					// builds the package to be sent to the user
+					DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
+							client.getPort());
+
+					System.out.println("Sending a pack with " + dataToSend.length + " data bytes to the client "
+							+ entry.getKey() + " on the port " + client.getPort());
+
+					// sends the packet to the client
+					socket.send(packToSend);
+
+					System.out.println("the data was (supposely succesfully) sent to the client");
 				}
-				
-				Snake snake = client.getSnake();
-				System.out.println("sending to the client: " + entry.getKey() + " whose snake is: " + snake.getId());
-				
-				Object posOfClientSnake = posInTheSnakeList.get(snake);
-				
-				// the client's snake isn't in the snake list anymore: his/her snake died!
-				if(posOfClientSnake == null)
-				{
-					serverFrm.removeClient(entry.getKey());
-					entryIterator.remove();
-					System.out.println("removing the client " + entry.getKey() + " because his/her snake died!");
-					continue;
-				}
-				
-				System.out.println("the position of the snake in the list is " + posOfClientSnake);
-				
-				serverFrm.drawSnake(snake, game.getSnakeColor(snake));
-				
-				// builds the byte array that will be sent through socket
-				byte[] dataToSend = this.serializeBitSet(message, (int) posOfClientSnake);
-
-				// builds the package to be sent to the user
-				DatagramPacket packToSend = new DatagramPacket(dataToSend, dataToSend.length, entry.getKey(),
-						client.getPort());
-
-				System.out.println("Sending a pack with " + dataToSend.length + " data bytes to the client "
-						+ entry.getKey() + " on the port " + client.getPort());
-
-				// sends the packet to the client
-				socket.send(packToSend);
-
-				System.out.println("the data was (supposely succesfully) sent to the client");
 			}
+			
 			
 			serverFrm.repaintCanvas();
 		}
