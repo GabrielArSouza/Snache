@@ -1,10 +1,17 @@
 package presentation;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.util.List;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 import domain.Snake;
 import domain.SnakePiece;
@@ -19,9 +26,13 @@ public class ServerBoardFrame extends JFrame
 	public ServerBoardFrame(int nRows, int nColumns, int squareSize)
 	{
 		canvas = new BoardCanvas(nRows, nColumns, squareSize);
-		super.add(canvas);  
-		super.setLayout(null);  
-		this.setPreferredSize(new Dimension(nRows * squareSize, nColumns * squareSize));
+		JPanel mainPanel = new JPanel();
+		mainPanel.setPreferredSize(new Dimension(2*nColumns*squareSize, nRows * squareSize));
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+		mainPanel.add(canvas);
+		mainPanel.add(new ControlPanel(nColumns*squareSize, nRows * squareSize));
+		
+		super.add(mainPanel);  
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.pack();
 		this.setLocationRelativeTo(null);
@@ -51,5 +62,40 @@ public class ServerBoardFrame extends JFrame
 	public void clearBoard()
 	{
 		canvas.clearCanvas();
+	}
+	
+	class ControlPanel extends JPanel
+	{
+		private JLabel lblClients;
+		private JButton btnKill;
+		private JTable jTable;
+		
+		public ControlPanel(int width, int height)
+		{
+			super();
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			setPreferredSize(new Dimension(width, height));
+			initComponents();
+		}
+		
+		private void initComponents()
+		{
+			this.lblClients = new JLabel("Players currently connected to the game");
+			this.btnKill = new JButton("Kill selected player");
+			this.jTable = new JTable(new ClientTableModel());
+			
+			lblClients.setAlignmentX(Component.CENTER_ALIGNMENT);
+			btnKill.setAlignmentX(Component.CENTER_ALIGNMENT);
+			
+			add(lblClients);
+			add(btnKill);
+			add(jTable);
+			
+		}
+		
+		public void updateClients()
+		{
+			
+		}
 	}
 }
