@@ -1,11 +1,15 @@
 package controller;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Queue;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -34,6 +38,12 @@ public class Game
 	private List<Snake> snakes;
 
 	private Map<Snake, ClientInfo> snakeClients;
+	
+	/** Colors that can be used in new snakes. */
+	private Queue<Color> availableColors;
+	
+	/** Colors assigned to the current snakes. */
+	private Map<Snake, Color> snakeColors;
 
 	/**
 	 * Instantiates a new game object.
@@ -49,7 +59,37 @@ public class Game
 		this.snakes = new ArrayList<Snake>();
 		this.snakeClients = new HashMap<Snake, ClientInfo>();
 		this.currentIds = new TreeSet<Long>();
+		this.availableColors = new LinkedList<Color>();
+		this.snakeColors = new HashMap<Snake, Color>();
+		resetAvailableColors();
 	}
+	
+	/**
+	 * Resets the stack of available colors. It shuffles the array of all possible
+	 * colors and put the colors on a stack.
+	 */
+	private void resetAvailableColors()
+	{
+		List<Color> allColors = Arrays.asList(GameConstants.ALL_COLORS);
+		Collections.shuffle(allColors);
+		availableColors.addAll(allColors);
+	}
+	
+	/**
+	 * Gets an available color from the stack of colors.
+	 *
+	 * @return the top color on the stack of colors.
+	 */
+	private Color getAvailableColor()
+	{
+		Color color = availableColors.poll();
+		
+		if(availableColors.isEmpty())
+			resetAvailableColors();
+		
+		return color;
+	}
+	
 
 	/**
 	 * Creates a new snake.
@@ -124,12 +164,14 @@ public class Game
 			return null;
 		}
 
+		Color color = getAvailableColor();
 		long id = nextAvailableId();
 		System.out.println("snake " + id + " created: " + headPiece.getRow() + " " + headPiece.getColumn() + " " + direction);
 
 		Snake snake = new Snake(headPiece.getRow(), headPiece.getColumn(), SnakeConstants.STANDARD_BODY_SIZE, direction,
 				id);
 
+		snakeColors.put(snake, color);
 		currentIds.add(id);
 		snakeClients.put(snake, client);
 		snakes.add(snake);
@@ -242,6 +284,8 @@ public class Game
 		for(SnakePiece bodyPiece : snake.getBody())
 			board.freeBoardPiece(bodyPiece);
 
+		availableColors.add(snakeColors.get(snake));
+		snakeColors.remove(snake);
 		snakeClients.remove(snake);
 		currentIds.remove(snake.getId());
 		snakes.remove(snake);
@@ -254,7 +298,7 @@ public class Game
 	 * @param snake
 	 *            the snake to be killed
 	 */
-	public void killMovedSnake(Snake snake)
+	public synchronized void killMovedSnake(Snake snake)
 	{
 		// The position of the new head in the board wasn't set to nonempty, so it
 		// doesn't need to be freed. The position of the old head is the first position
@@ -262,6 +306,8 @@ public class Game
 		for(SnakePiece bodyPiece : snake.getBody())
 			board.freeBoardPiece(bodyPiece);
 
+		availableColors.add(snakeColors.get(snake));
+		snakeColors.remove(snake);
 		snakeClients.remove(snake);
 		currentIds.remove(snake.getId());
 	}
@@ -313,6 +359,11 @@ public class Game
 
 			return currentId;
 		}
+	}
+	
+	public Color getSnakeColor(Snake snake)
+	{
+		return snakeColors.get(snake);
 	}
 
 	/**
