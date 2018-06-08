@@ -110,6 +110,7 @@ public class SocketServerSnake
 					synchronized(game)
 					{
 						snake = game.createSnake(clientInfo);
+						serverFrm.addClient(clientIP, game.getSnakeColor(snake));
 					}
 					
 					clientInfo.setSnake(snake);

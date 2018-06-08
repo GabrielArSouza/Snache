@@ -3,15 +3,22 @@ package presentation;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.net.InetAddress;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import domain.Snake;
 import domain.SnakePiece;
@@ -22,6 +29,9 @@ public class ServerBoardFrame extends JFrame
 	private static final long serialVersionUID = 535815750157046780L;
 	
 	private BoardCanvas canvas;
+	private Map<InetAddress, Color> clientColors;
+	private SortedSet<InetAddress> clients;
+	private AbstractTableModel tableModel;
 
 	public ServerBoardFrame(int nRows, int nColumns, int squareSize)
 	{
@@ -30,6 +40,19 @@ public class ServerBoardFrame extends JFrame
 		mainPanel.setPreferredSize(new Dimension(2*nColumns*squareSize, nRows * squareSize));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
 		mainPanel.add(canvas);
+		
+		clientColors = new HashMap<InetAddress, Color>();
+		
+		clients = new TreeSet<InetAddress>(new Comparator<InetAddress>() 
+		{
+			@Override
+			public int compare(InetAddress o1, InetAddress o2)
+			{
+				return o1.getHostAddress().compareTo(o2.getHostAddress());
+			}
+		});		
+		tableModel = new ClientTableModel(clients);
+		
 		mainPanel.add(new ControlPanel(nColumns*squareSize, nRows * squareSize));
 		
 		super.add(mainPanel);  
@@ -64,8 +87,25 @@ public class ServerBoardFrame extends JFrame
 		canvas.clearCanvas();
 	}
 	
+	public void addClient(InetAddress ip, Color color)
+	{
+		clients.add(ip);
+		clientColors.put(ip, color);
+		
+		int pos = clients.headSet(ip).size();
+		tableModel.fireTableRowsInserted(pos, pos);
+	}
+	
+	public void removeClient(InetAddress ip)
+	{
+		clientColors.remove(ip);
+		clients.remove(ip);
+		tableModel.fireTableDataChanged();
+	}
+	
 	class ControlPanel extends JPanel
 	{
+		private static final long serialVersionUID = 8802241510756079347L;
 		private JLabel lblClients;
 		private JButton btnKill;
 		private JTable jTable;
@@ -82,7 +122,19 @@ public class ServerBoardFrame extends JFrame
 		{
 			this.lblClients = new JLabel("Players currently connected to the game");
 			this.btnKill = new JButton("Kill selected player");
-			this.jTable = new JTable(new ClientTableModel());
+			this.jTable = new JTable(tableModel)
+			{
+				private static final long serialVersionUID = -4810838642787505331L;
+
+				@Override
+			    public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
+					Component comp = super.prepareRenderer(renderer, row, col);
+					System.out.println("color " + clientColors.get((InetAddress) getModel().getValueAt(row, col)));
+					comp.setBackground( clientColors.get((InetAddress) getModel().getValueAt(row, col)));
+					
+			        return comp;
+			    }
+			};
 			
 			lblClients.setAlignmentX(Component.CENTER_ALIGNMENT);
 			btnKill.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -90,12 +142,6 @@ public class ServerBoardFrame extends JFrame
 			add(lblClients);
 			add(btnKill);
 			add(jTable);
-			
-		}
-		
-		public void updateClients()
-		{
-			
 		}
 	}
 }
