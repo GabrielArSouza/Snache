@@ -248,6 +248,8 @@ public class SocketServerSnake
 					// removes the snake from the snake list
 					game.killInactiveSnake(client.getSnake());
 					
+					serverFrm.removeClient(entry.getKey());
+					
 					// removes the client from the client list
 					entryIterator.remove();
 					
@@ -263,6 +265,7 @@ public class SocketServerSnake
 				// the client's snake isn't in the snake list anymore: his/her snake died!
 				if(posOfClientSnake == null)
 				{
+					serverFrm.removeClient(entry.getKey());
 					entryIterator.remove();
 					System.out.println("removing the client " + entry.getKey() + " because his/her snake died!");
 					continue;
