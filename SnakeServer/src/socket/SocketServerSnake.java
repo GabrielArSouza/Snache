@@ -247,6 +247,8 @@ public class SocketServerSnake
 				{
 					// removes the snake from the snake list
 					game.killInactiveSnake(client.getSnake());
+						
+					serverFrm.removeClient(entry.getKey());
 					
 					serverFrm.removeClient(entry.getKey());
 					
