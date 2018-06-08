@@ -16,6 +16,7 @@ import controller.GameConstants;
 import domain.Snake;
 import domain.SnakeConstants;
 import domain.SnakePiece;
+import presentation.ServerBoardFrame;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -30,6 +31,8 @@ public class SocketServerSnake
 
 	/** Information about all players currently connected to the game. */
 	private Map<InetAddress, ClientInfo> clientInfos;
+	
+	private ServerBoardFrame serverFrm;
 
 	/**
 	 * Reference to the game object. It's used to change the game behavior based on
@@ -43,9 +46,10 @@ public class SocketServerSnake
 	 * @param game
 	 *            the game that the server controls
 	 */
-	public SocketServerSnake(Game game)
+	public SocketServerSnake(Game game, ServerBoardFrame serverBoardFrame)
 	{
 		this.game = game;
+		this.serverFrm = serverBoardFrame;
 		clientInfos = new HashMap<InetAddress, ClientInfo>();
 	}
 
@@ -56,9 +60,6 @@ public class SocketServerSnake
 	{
 		Thread boardUpdater = new BoardUpdater();
 		boardUpdater.start();
-
-		// Thread updateGameToClients = new UpdateGameToClients();
-		// updateGameToClients.start();
 
 		try
 		{
@@ -181,14 +182,12 @@ public class SocketServerSnake
 				{
 					System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
 					System.out.println("while(true) on update");
+					
 					// the updates occur every GAME_LATENCY milliseconds
 					Thread.sleep(GameConstants.GAME_LATENCY);
 
 					update();
 
-					// prints the board on the console
-					// TODO remove this call; it's used only for debug purposes
-					// game.printBoardMatrix();
 					System.out.println("endwhile update()");
 					System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
 
@@ -216,9 +215,6 @@ public class SocketServerSnake
 		 */
 		private void update() throws IOException
 		{
-			System.out.println("killing inactive snakes...");
-			killInactiveClients();
-
 			System.out.println("moving the snakes...");
 			Map<Snake, Integer> posInTheSnakeList = game.moveSnakes();
 			
@@ -233,6 +229,8 @@ public class SocketServerSnake
 
 			// Iterates over the players and send the board to them.
 			Iterator<Map.Entry<InetAddress, ClientInfo>> entryIterator = clientInfos.entrySet().iterator();
+			
+			serverFrm.clearBoard();
 			
 			System.out.println("sending the board to the clients...");
 			while(entryIterator.hasNext())
@@ -271,6 +269,8 @@ public class SocketServerSnake
 				
 				System.out.println("the position of the snake in the list is " + posOfClientSnake);
 				
+				serverFrm.drawSnake(snake, game.getSnakeColor(snake));
+				
 				// builds the byte array that will be sent through socket
 				byte[] dataToSend = this.serializeBitSet(message, (int) posOfClientSnake);
 
@@ -286,29 +286,10 @@ public class SocketServerSnake
 
 				System.out.println("the data was (supposely succesfully) sent to the client");
 			}
+			
+			serverFrm.repaintCanvas();
 		}
 
-		/**
-		 * Disconnect the inactive clients from the game.
-		 */
-		private void killInactiveClients()
-		{
-			// iterator is used so that entries can be removed while iterating the map
-			Iterator<Map.Entry<InetAddress, ClientInfo>> entryIterator = clientInfos.entrySet().iterator();
-
-			while(entryIterator.hasNext())
-			{
-				ClientInfo clientInfo = entryIterator.next().getValue();
-
-				if(!clientInfo.isActive())
-				{
-					System.out.println("killing an inactive client...");
-					game.killInactiveSnake(clientInfo.getSnake());
-					entryIterator.remove();
-				}
-			}
-
-		}
 
 		/**
 		 * Encapsulates *all* the snakes in a single BitSet object. For each snake, all
