@@ -3,9 +3,12 @@ package presentation;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -22,6 +25,7 @@ import javax.swing.table.TableCellRenderer;
 
 import domain.Snake;
 import domain.SnakePiece;
+import socket.SocketServerSnake;
 
 public class ServerBoardFrame extends JFrame
 {
@@ -32,6 +36,7 @@ public class ServerBoardFrame extends JFrame
 	private Map<InetAddress, Color> clientColors;
 	private SortedSet<InetAddress> clients;
 	private AbstractTableModel tableModel;
+	private SocketServerSnake socketServer;
 
 	public ServerBoardFrame(int nRows, int nColumns, int squareSize)
 	{
@@ -59,6 +64,11 @@ public class ServerBoardFrame extends JFrame
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.pack();
 		this.setLocationRelativeTo(null);
+	}
+	
+	public void setSocketServer(SocketServerSnake socketServer)
+	{
+		this.socketServer = socketServer;
 	}
 	
 	public void drawSnake(Snake snake, Color color)
@@ -138,6 +148,25 @@ public class ServerBoardFrame extends JFrame
 			
 			lblClients.setAlignmentX(Component.CENTER_ALIGNMENT);
 			btnKill.setAlignmentX(Component.CENTER_ALIGNMENT);
+			btnKill.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					int row = jTable.getSelectedRow();
+					
+					if(row != -1)
+					{
+						InetAddress ip = null;
+						Iterator<InetAddress> it = clients.iterator();
+						
+						for(int i = 0; i <= row; ++i) ip = it.next();
+						
+						socketServer.killSnake(ip);
+					}
+					
+				}
+			});
 			
 			add(lblClients);
 			add(btnKill);

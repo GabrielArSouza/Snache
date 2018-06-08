@@ -22,6 +22,7 @@ public class Main
 		serverFrm.setVisible(true);
 		Game game = new Game(board);
 		SocketServerSnake socketServer = new SocketServerSnake(game, serverFrm);
+		serverFrm.setSocketServer(socketServer);
 		socketServer.initSocket();
 	}
 }
