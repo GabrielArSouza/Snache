@@ -63,7 +63,7 @@ public class SocketClient
 	{
 		try
 		{
-			serverIp = InetAddress.getByName("localhost");
+			serverIp = InetAddress.getByName("10.7.116.16");
 
 			byte[] dataToSend = new byte[0];
 
